@@ -1,0 +1,49 @@
+{
+  "login": {
+    "title": "Login",
+    "register_title": "Create Account",
+    "email": "Email",
+    "password": "Password",
+    "display_name": "Display Name",
+    "submit": "Login",
+    "register_submit": "Sign Up",
+    "switch_to_register": "Register here",
+    "switch_to_login": "Login here",
+    "switch_to_register_q": "Don't have an account?",
+    "switch_to_login_q": "Already have an account?",
+    "guest_mode": "Use Guest Mode (No history saved)",
+    "error_display_name": "Please enter a display name"
+  },
+  "chat": {
+    "app_title": "CP KKU Admission Chatbot",
+    "app_subtitle": "College of Computing, Khon Kaen University",
+    "welcome": "Hello! You can ask about CP KKU admissions here.",
+    "placeholder": "Type your question here...",
+    "new_chat": "New Chat",
+    "history": "Previous Conversations",
+    "no_history": "No conversation history yet",
+    "logout": "Logout",
+    "exit_guest": "Exit Guest Mode",
+    "guest_warning": "Guest Mode - Chat history is not saved persistently.",
+    "searching": "Searching for answers...",
+    "delete_confirm_title": "Confirm Deletion?",
+    "delete_confirm_desc": "Are you sure you want to delete this chat history? This action cannot be undone.",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "error_connection": "Sorry, a connection error occurred. Please try again.",
+    "error_delete": "Failed to delete session. Please try again.",
+    "new_topic": "New Topic",
+    "guest_name": "Guest"
+  },
+  "suggestions": {
+    "criteria": "What are the admission criteria?",
+    "documents": "What documents are required for application?",
+    "schedule": "What is the admission schedule?"
+  },
+  "common": {
+    "or": "or",
+    "logged_in": "Logged In",
+    "hello": "Hello",
+    "rag_powered": "RAG-Powered"
+  }
+}

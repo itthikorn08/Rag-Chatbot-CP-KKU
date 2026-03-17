@@ -42,7 +42,8 @@
 - ติดตามเกณฑ์การใช้คะแนนและค่าน้ำหนักของแต่ละสาขาได้ที่เว็บไซต์รับเข้าศึกษา
 
 ## ข้อมูลติดต่อ
-- **เว็บไซต์การรับสมัคร มข.:** [admissions.kku.ac.th](https://admissions.kku.ac.th)
-- **เว็บไซต์วิทยาลัยการคอมพิวเตอร์:** [computing.kku.ac.th](https://computing.kku.ac.th)
+- **เว็บไซต์แนะนำสำหรับการรับสมัคร:** [https://computing.kku.ac.th/bsc-entrance](https://computing.kku.ac.th/bsc-entrance)
+- **เว็บไซต์การรับสมัคร มข. (ส่วนกลาง):** [https://admissions.kku.ac.th](https://admissions.kku.ac.th)
+- **เว็บไซต์วิทยาลัยการคอมพิวเตอร์:** [https://computing.kku.ac.th](https://computing.kku.ac.th)
 - **ที่อยู่:** วิทยาลัยการคอมพิวเตอร์ มหาวิทยาลัยขอนแก่น 123 ถ.มิตรภาพ ต.ในเมือง อ.เมือง จ.ขอนแก่น 40002
 - **โทรศัพท์สอบถามวิชาการ:** 043-009700 ต่อ 44555

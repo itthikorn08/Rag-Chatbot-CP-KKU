@@ -9,14 +9,35 @@ const apiClient = axios.create({
   },
 });
 
-/**
- * Send a question to the RAG backend and return the answer.
- * @param {string} question
- * @returns {Promise<string>}
- */
-export const askQuestion = async (question) => {
-  const { data } = await apiClient.post("/chat/ask", { question });
+// Request interceptor to attach JWT token
+apiClient.interceptors.request.use((config) => {
+  const token = localStorage.getItem("authToken");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+}, (error) => {
+  return Promise.reject(error);
+});
+
+export const askQuestion = async (question, sessionId) => {
+  const { data } = await apiClient.post("/chat/ask", { question, sessionId });
   return data.answer;
+};
+
+export const getChatSessions = async () => {
+  const { data } = await apiClient.get("/chat/sessions");
+  return data.sessions;
+};
+
+export const getChatHistory = async (sessionId) => {
+  const { data } = await apiClient.get(`/chat/history/${sessionId}`);
+  return data.history;
+};
+
+export const deleteChatSession = async (sessionId) => {
+  const { data } = await apiClient.delete(`/chat/history/${sessionId}`);
+  return data;
 };
 
 export default apiClient;

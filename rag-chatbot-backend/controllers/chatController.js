@@ -1,37 +1,49 @@
+const mongoose = require("mongoose");
 const { getAnswer } = require("../services/ragHelper");
 const Chat = require("../models/Chat");
 
-/**
- * Handle incoming chat question.
- * Delegates all RAG logic to the ragHelper service.
- */
 const askQuestion = async (req, res) => {
   try {
-    const { question } = req.body;
+    const { question, sessionId } = req.body;
 
     if (!question || typeof question !== "string") {
       return res.status(400).json({ error: "กรุณาระบุคำถาม (question)" });
     }
 
-    // Fetch previous chat history for conversational memory
-    const recentChats = await Chat.find().sort({ timestamp: -1 }).limit(5);
-    recentChats.reverse(); // Chronological order
-    
+    if (!sessionId) {
+      return res.status(400).json({ error: "กรุณาระบุ sessionId" });
+    }
+
+    const userId = req.user ? req.user.id : null;
+
+    const query = { sessionId };
+    if (userId) query.userId = userId;
+
+    const recentChats = await Chat.find(query).sort({ timestamp: -1 }).limit(5);
+    recentChats.reverse();
+
     const chatHistory = [];
     for (const chat of recentChats) {
       chatHistory.push({ role: "user", content: chat.question });
       chatHistory.push({ role: "assistant", content: chat.answer });
     }
 
-    // Get answer from RAG helper, passing the history
     const answer = await getAnswer(question, chatHistory);
 
-    // Save current chat round to MongoDB
-    try {
-      await Chat.create({ question, answer });
-    } catch (saveError) {
-      console.error("Failed to save chat history:", saveError.message);
-      // We don't block the response even if history fails to save
+    if (userId) {
+      try {
+        let sessionTitle = "New Chat";
+        if (recentChats.length === 0) {
+          sessionTitle = question.length > 30 ? question.substring(0, 30) + "..." : question;
+        } else {
+          const firstInSession = await Chat.findOne({ sessionId, userId }).sort({ timestamp: 1 });
+          if (firstInSession) sessionTitle = firstInSession.sessionTitle;
+        }
+
+        await Chat.create({ userId, sessionId, sessionTitle, question, answer });
+      } catch (saveError) {
+        console.error("Failed to save chat history:", saveError.message);
+      }
     }
 
     return res.json({ answer });
@@ -41,4 +53,70 @@ const askQuestion = async (req, res) => {
   }
 };
 
-module.exports = { askQuestion };
+const getChatHistory = async (req, res) => {
+  try {
+    const { sessionId } = req.params;
+    const userId = req.user.id;
+
+    if (!sessionId) {
+      return res.status(400).json({ error: "กรุณาระบุ sessionId" });
+    }
+
+    const chats = await Chat.find({ userId, sessionId })
+      .sort({ timestamp: 1 })
+      .select("question answer timestamp");
+
+    return res.json({ history: chats });
+  } catch (error) {
+    console.error("Error in getChatHistory:", error.message);
+    return res.status(500).json({ error: "เกิดข้อผิดพลาดในการดึงประวัติการสนทนา" });
+  }
+};
+
+const getChatSessions = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    const sessions = await Chat.aggregate([
+      { $match: { userId: new mongoose.Types.ObjectId(userId) } },
+      { $sort: { timestamp: -1 } },
+      {
+        $group: {
+          _id: "$sessionId",
+          title: { $first: "$sessionTitle" },
+          lastMessageAt: { $first: "$timestamp" },
+        }
+      },
+      { $sort: { lastMessageAt: -1 } }
+    ]);
+
+    return res.json({ sessions });
+  } catch (error) {
+    console.error("Error in getChatSessions:", error.message);
+    return res.status(500).json({ error: "เกิดข้อผิดพลาดในการดึงรายการห้องสนทนา" });
+  }
+};
+
+/**
+ * DELETE /api/chat/session/:sessionId
+ * Deletes all chat messages in a specific session for the authenticated user.
+ */
+const deleteChatSession = async (req, res) => {
+  try {
+    const { sessionId } = req.params;
+    const userId = req.user.id;
+
+    if (!sessionId) {
+      return res.status(400).json({ error: "กรุณาระบุ sessionId" });
+    }
+
+    await Chat.deleteMany({ userId, sessionId });
+
+    return res.json({ message: "ลบประวัติการสนทนาเรียบร้อยแล้ว" });
+  } catch (error) {
+    console.error("Error in deleteChatSession:", error.message);
+    return res.status(500).json({ error: "เกิดข้อผิดพลาดในการลบประวัติการสนทนา" });
+  }
+};
+
+module.exports = { askQuestion, getChatHistory, getChatSessions, deleteChatSession };
