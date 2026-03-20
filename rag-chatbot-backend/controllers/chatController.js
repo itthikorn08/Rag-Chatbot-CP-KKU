@@ -97,10 +97,6 @@ const getChatSessions = async (req, res) => {
   }
 };
 
-/**
- * DELETE /api/chat/session/:sessionId
- * Deletes all chat messages in a specific session for the authenticated user.
- */
 const deleteChatSession = async (req, res) => {
   try {
     const { sessionId } = req.params;

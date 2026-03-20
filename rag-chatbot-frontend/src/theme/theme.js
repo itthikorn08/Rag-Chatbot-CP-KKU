@@ -10,7 +10,7 @@ export const getAppTheme = (mode) => {
     palette: {
       mode,
       primary: {
-        main: mode === "light" ? "#1a237e" : "#5c6bc0", // Lighter blue for dark mode
+        main: mode === "light" ? "#1a237e" : "#5c6bc0", 
         light: "#534bae",
         dark: "#000051",
         contrastText: "#ffffff",
@@ -22,11 +22,11 @@ export const getAppTheme = (mode) => {
         contrastText: "#000000",
       },
       background: {
-        default: mode === "light" ? "#f0f2f5" : "#050505", // Deeper black for dark mode
-        paper: mode === "light" ? "#ffffff" : "#121212", // Standard dark paper
+        default: mode === "light" ? "#f0f2f5" : "#050505", 
+        paper: mode === "light" ? "#ffffff" : "#121212", 
       },
       text: {
-        primary: mode === "light" ? "#1a1a2e" : "#ffffff", // Pure white for dark mode
+        primary: mode === "light" ? "#1a1a2e" : "#ffffff", 
         secondary: mode === "light" ? "#555770" : "#b0b0b0",
       },
     },

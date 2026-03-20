@@ -4,14 +4,12 @@ import { useMediaQuery } from "@mui/material";
 const ThemeContext = createContext();
 
 export const ThemeProvider = ({ children }) => {
-  // Get initial theme from localStorage or default to 'system'
   const [mode, setMode] = useState(() => {
     return localStorage.getItem("themeMode") || "system";
   });
 
   const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
 
-  // Actual theme mode to use
   const actualMode = useMemo(() => {
     if (mode === "system") {
       return prefersDarkMode ? "dark" : "light";

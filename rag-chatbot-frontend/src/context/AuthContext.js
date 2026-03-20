@@ -37,7 +37,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = useCallback(async (email, password) => {
     const { data } = await apiClient.post("/auth/login", { email, password });
-    localStorage.setItem("authToken", data.token); // Set immediately
+    localStorage.setItem("authToken", data.token); 
     setToken(data.token);
     setUser(data.user);
     return data;
@@ -45,7 +45,7 @@ export const AuthProvider = ({ children }) => {
 
   const register = useCallback(async (email, password, displayName) => {
     const { data } = await apiClient.post("/auth/register", { email, password, displayName });
-    localStorage.setItem("authToken", data.token); // Set immediately
+    localStorage.setItem("authToken", data.token); 
     setToken(data.token);
     setUser(data.user);
     return data;
