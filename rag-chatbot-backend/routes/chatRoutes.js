@@ -1,9 +1,11 @@
 const express = require("express");
 const router = express.Router();
-const { askQuestion, getChatHistory, getChatSessions, deleteChatSession } = require("../controllers/chatController");
+const { askQuestion, getChatHistory, getChatSessions, deleteChatSession, syncKnowledge } = require("../controllers/chatController");
 const { protect, requireAuth } = require("../middleware/authMiddleware");
 
 router.post("/ask", protect, askQuestion);
+
+router.post("/sync", requireAuth, syncKnowledge);
 
 router.get("/sessions", requireAuth, getChatSessions);
 

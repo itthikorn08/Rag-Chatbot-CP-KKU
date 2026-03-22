@@ -33,7 +33,9 @@
     "error_connection": "Sorry, a connection error occurred. Please try again.",
     "error_delete": "Failed to delete session. Please try again.",
     "new_topic": "New Topic",
-    "guest_name": "Guest"
+    "guest_name": "Guest",
+    "sync_success": "Knowledge base has been successfully synchronized!",
+    "sync_error": "An error occurred while syncing knowledge. Please try again."
   },
   "suggestions": {
     "criteria": "What are the admission criteria?",
@@ -43,7 +45,6 @@
   "common": {
     "or": "or",
     "logged_in": "Logged In",
-    "hello": "Hello",
-    "rag_powered": "RAG-Powered"
+    "hello": "Hello"
   }
 }

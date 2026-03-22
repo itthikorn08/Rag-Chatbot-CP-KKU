@@ -39,4 +39,9 @@ export const deleteChatSession = async (sessionId) => {
   return data;
 };
 
+export const syncKnowledge = async () => {
+  const { data } = await apiClient.post("/chat/sync");
+  return data;
+};
+
 export default apiClient;

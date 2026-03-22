@@ -116,7 +116,7 @@ const getAnswer = async (question, chatHistory = []) => {
 4. **การแนะนำเว็บไซต์:** 
    - ให้แนะนำลิงก์เว็บไซต์คณะโดยตรงคือ https://computing.kku.ac.th/bsc-entrance เพื่อดูรายละเอียดหลักสูตรและเกณฑ์เฉพาะของวิทยาลัย
    - พร้อมทั้งแนะนำเว็บไซต์การรับสมัคร มข. (ส่วนกลาง) คือ https://admissions.kku.ac.th เพื่อติดตามสถานะและประกาศภาพรวมของมหาวิทยาลัย
-
+5. ตอบตามภาษาที่ผู้ใช้ถาม
 Context:
 {context}`],
       new MessagesPlaceholder("chat_history"),
@@ -151,4 +151,21 @@ Context:
   }
 };
 
-module.exports = { getAnswer };
+const syncKnowledgeBase = async () => {
+  try {
+    await client.connect();
+    console.log("Syncing knowledge base: Clearing existing documents...");
+    await collection.deleteMany({});
+    
+    vectorStore = null; // Reset vectorStore to force rebuild
+    await buildVectorStore();
+    
+    const count = await collection.countDocuments();
+    return { success: true, message: `Knowledge base synced successfully. Now contains ${count} chunks.` };
+  } catch (err) {
+    console.error("Error syncing knowledge base:", err);
+    throw err;
+  }
+};
+
+module.exports = { getAnswer, syncKnowledgeBase };

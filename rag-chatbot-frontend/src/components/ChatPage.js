@@ -41,8 +41,9 @@ import ChatBubbleOutlineRoundedIcon from "@mui/icons-material/ChatBubbleOutlineR
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
 import LanguageRoundedIcon from "@mui/icons-material/LanguageRounded";
+import SyncRoundedIcon from "@mui/icons-material/SyncRounded";
 import ChatBubble from "./ChatBubble";
-import { askQuestion, getChatHistory, getChatSessions, deleteChatSession } from "../api/chatApi";
+import { askQuestion, getChatHistory, getChatSessions, deleteChatSession, syncKnowledge } from "../api/chatApi";
 import { useThemeContext } from "../theme/ThemeContext";
 import { useAuth } from "../context/AuthContext";
 
@@ -59,6 +60,7 @@ const ChatPage = ({ onExitGuest, isGuest }) => {
   );
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [sessionToDelete, setSessionToDelete] = useState(null);
+  const [syncing, setSyncing] = useState(false);
 
   const messagesEndRef = useRef(null);
   const { t, i18n } = useTranslation();
@@ -224,6 +226,21 @@ const ChatPage = ({ onExitGuest, isGuest }) => {
     }
   };
 
+  const handleSyncKnowledge = async () => {
+    if (syncing) return;
+    setSyncing(true);
+    try {
+      const result = await syncKnowledge();
+      console.log("Sync result:", result);
+      alert(t("chat.sync_success") || "ฐานข้อมูลความรู้ถูกจัดระเบียบใหม่เรียบร้อยแล้ว!");
+    } catch (err) {
+      console.error("Failed to sync knowledge:", err);
+      alert(t("chat.sync_error") || "เกิดข้อผิดพลาดในการซิงค์ข้อมูล กรุณาลองใหม่");
+    } finally {
+      setSyncing(false);
+    }
+  };
+
   const displayName = user ? user.displayName : t("chat.guest_name");
 
   return (
@@ -260,6 +277,29 @@ const ChatPage = ({ onExitGuest, isGuest }) => {
             >
               {t("chat.new_chat")}
             </Button>
+
+            {!isGuest && (
+              <Button
+                variant="text"
+                fullWidth
+                startIcon={syncing ? <CircularProgress size={18} /> : <SyncRoundedIcon />}
+                onClick={handleSyncKnowledge}
+                disabled={syncing}
+                sx={{
+                  mb: 2,
+                  py: 1,
+                  borderRadius: 2,
+                  textTransform: "none",
+                  fontSize: "0.875rem",
+                  color: "text.secondary",
+                  border: "1px dashed",
+                  borderColor: "divider",
+                  "&:hover": { bgcolor: "action.hover", borderColor: "primary.main", color: "primary.main" },
+                }}
+              >
+                {syncing ? "Syncing..." : "Sync Knowledge Base"}
+              </Button>
+            )}
 
             <Typography variant="overline" color="text.secondary" sx={{ ml: 1, mb: 1 }}>
               {t("chat.history")}
@@ -388,20 +428,6 @@ const ChatPage = ({ onExitGuest, isGuest }) => {
               </Typography>
             </Box>
             <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-              <Chip
-                icon={<AutoAwesomeRoundedIcon sx={{ fontSize: 16 }} />}
-                label={t("common.rag_powered")}
-                size="small"
-                sx={{
-                  display: { xs: "none", sm: "flex" },
-                  bgcolor: "rgba(200, 164, 21, 0.2)",
-                  color: "secondary.main",
-                  fontWeight: 500,
-                  border: "1px solid rgba(200, 164, 21, 0.4)",
-                  "& .MuiChip-icon": { color: "secondary.main" },
-                }}
-              />
-
               <Chip
                 icon={<PersonRoundedIcon sx={{ fontSize: 16 }} />}
                 label={displayName}
