@@ -1,0 +1,346 @@
+[
+  {
+    "text": "วิทยาลัยการคอมพิวเตอร์ มหาวิทยาลัยขอนแก่น (College of Computing, KKU) เปิดรับสมัครนักศึกษาใหม่ระดับปริญญาตรี (B.Sc.) ใน 5 หลักสูตร ได้แก่ 1) วิทยาการคอมพิวเตอร์ (CS) 2) เทคโนโลยีสารสนเทศและนวัตกรรมอัจฉริยะ (ITII) 3) ภูมิสารสนเทศศาสตร์ (GIS) 4) ปัญญาประดิษฐ์ (AI) 5) ความมั่นคงปลอดภัยไซเบอร์ (Cybersecurity) โดยมีการรับสมัคร 3 รอบหลัก ได้แก่ รอบที่ 1 Portfolio, รอบที่ 2 โควตาภาคตะวันออกเฉียงเหนือ (NETSAT), และรอบที่ 3 Admission (TGAT/A-Level)",
+    "metadata": {
+      "category": "General Info",
+      "university": "Khon Kaen University",
+      "faculty": "College of Computing",
+      "source_url": "https://computing.kku.ac.th/bsc-entrance"
+    }
+  },
+  {
+    "text": "รอบที่ 1 Portfolio (แฟ้มสะสมผลงาน) มี 3 โครงการหลัก: 1) โครงการทุนช้างเผือก (เน้นผลการเรียนดีเยี่ยม) 2) ทุนผู้มีความสามารถดีเด่นด้านคอมพิวเตอร์และเทคโนโลยีสารสนเทศ (เน้นทักษะและรางวัล) 3) โครงการผู้มีศักยภาพด้านคอมพิวเตอร์ (เน้นพื้นฐานและความสนใจ)",
+    "metadata": {
+      "category": "Admission Round",
+      "round": 1,
+      "admission_type": "Portfolio",
+      "source_url": "https://computing.kku.ac.th/bsc-entrance"
+    }
+  },
+  {
+    "text": "รอบที่ 1 Portfolio - โครงการทุนช้างเผือก: เป็นทุนการศึกษาสำหรับนักเรียนที่มีผลการเรียนดีเยี่ยม สามารถดูรายละเอียดเพิ่มเติมได้ที่ประกาศรับสมัครแต่ละปีการศึกษา (ปี 2568 และ 2569)",
+    "metadata": {
+      "category": "Admission Round",
+      "round": 1,
+      "admission_type": "Portfolio",
+      "project_name": "โครงการทุนช้างเผือก",
+      "pdf_links": {
+        "2568": "https://api.computing.kku.ac.th//storage/documents/2025-7-4-1752656846-undefined.pdf",
+        "2569": "https://api.computing.kku.ac.th//storage/documents/2025-9-6-1758251310-undefined.pdf"
+      },
+      "source_url": "https://computing.kku.ac.th/bsc-entrance"
+    }
+  },
+  {
+    "text": "รอบที่ 1 Portfolio - ทุนผู้มีความสามารถดีเด่นด้านคอมพิวเตอร์และเทคโนโลยีสารสนเทศ: เป็นทุนสำหรับนักเรียนที่มีทักษะหรือรางวัลด้านคอมพิวเตอร์และเทคโนโลยีสารสนเทศ สามารถดูรายละเอียดเพิ่มเติมได้ที่ประกาศรับสมัครแต่ละปีการศึกษา (ปี 2568 และ 2569)",
+    "metadata": {
+      "category": "Admission Round",
+      "round": 1,
+      "admission_type": "Portfolio",
+      "project_name": "ทุนผู้มีความสามารถดีเด่นด้านคอมพิวเตอร์และเทคโนโลยีสารสนเทศ",
+      "pdf_links": {
+        "2568": "https://api.computing.kku.ac.th//storage/documents/2025-7-4-1752656883-undefined.pdf",
+        "2569": "https://api.computing.kku.ac.th//storage/documents/2025-9-6-1758251340-undefined.pdf"
+      },
+      "source_url": "https://computing.kku.ac.th/bsc-entrance"
+    }
+  },
+  {
+    "text": "รอบที่ 1 Portfolio - โครงการผู้มีศักยภาพด้านคอมพิวเตอร์: เป็นโครงการสำหรับนักเรียนที่มีพื้นฐานและความสนใจด้านคอมพิวเตอร์ สามารถดูรายละเอียดเพิ่มเติมได้ที่ประกาศรับสมัครแต่ละปีการศึกษา (ปี 2568 และ 2569)",
+    "metadata": {
+      "category": "Admission Round",
+      "round": 1,
+      "admission_type": "Portfolio",
+      "project_name": "โครงการผู้มีศักยภาพด้านคอมพิวเตอร์",
+      "pdf_links": {
+        "2568": "https://api.computing.kku.ac.th//storage/documents/2025-7-4-1752656868-undefined.pdf",
+        "2569": "https://api.computing.kku.ac.th//storage/documents/2025-9-6-1758251361-undefined.pdf"
+      },
+      "source_url": "https://computing.kku.ac.th/bsc-entrance"
+    }
+  },
+  {
+    "text": "รอบที่ 2 โควตาภาคตะวันออกเฉียงเหนือ ใช้คะแนน NETSAT เป็นเกณฑ์หลัก โดยต้องมีคะแนนรวมขั้นต่ำไม่น้อยกว่า 30% สาขาวิทยาการคอมพิวเตอร์ (CS) ใช้สัดส่วนคะแนน: ภาษาไทย(101) 5%, อังกฤษ(102) 15%, คณิตศาสตร์(103) 25%, วิทย์และเทคโนโลยี(201) 40%, ฟิสิกส์(204) 15% รวม 100%",
+    "metadata": {
+      "category": "Admission Round",
+      "round": 2,
+      "admission_type": "Quota",
+      "test_type": "NETSAT",
+      "program": "วิทยาการคอมพิวเตอร์ (CS)",
+      "minimum_score_percent": 30,
+      "score_weights": {
+        "ภาษาไทย_101": 5,
+        "อังกฤษ_102": 15,
+        "คณิตศาสตร์_103": 25,
+        "วิทยาศาสตร์และเทคโนโลยี_201": 40,
+        "ฟิสิกส์_204": 15
+      },
+      "source_url": "https://computing.kku.ac.th/bsc-entrance"
+    }
+  },
+  {
+    "text": "รอบที่ 2 โควตาภาคตะวันออกเฉียงเหนือ ใช้คะแนน NETSAT เป็นเกณฑ์หลัก โดยต้องมีคะแนนรวมขั้นต่ำไม่น้อยกว่า 30% สาขาเทคโนโลยีสารสนเทศและนวัตกรรมอัจฉริยะ (ITII) ใช้สัดส่วนคะแนน: ภาษาไทย(101) 10%, อังกฤษ(102) 10%, คณิตศาสตร์(103) 20%, วิทย์และเทคโนโลยี(201) 40%, ฟิสิกส์(204) 20% รวม 100%",
+    "metadata": {
+      "category": "Admission Round",
+      "round": 2,
+      "admission_type": "Quota",
+      "test_type": "NETSAT",
+      "program": "เทคโนโลยีสารสนเทศและนวัตกรรมอัจฉริยะ (ITII)",
+      "minimum_score_percent": 30,
+      "score_weights": {
+        "ภาษาไทย_101": 10,
+        "อังกฤษ_102": 10,
+        "คณิตศาสตร์_103": 20,
+        "วิทยาศาสตร์และเทคโนโลยี_201": 40,
+        "ฟิสิกส์_204": 20
+      },
+      "source_url": "https://computing.kku.ac.th/bsc-entrance"
+    }
+  },
+  {
+    "text": "รอบที่ 2 โควตาภาคตะวันออกเฉียงเหนือ ใช้คะแนน NETSAT เป็นเกณฑ์หลัก โดยต้องมีคะแนนรวมขั้นต่ำไม่น้อยกว่า 30% สาขาภูมิสารสนเทศศาสตร์ (GIS) ใช้สัดส่วนคะแนน: ภาษาไทย(101) 15%, อังกฤษ(102) 10%, คณิตศาสตร์(103) 20%, วิทย์และเทคโนโลยี(201) 45%, ฟิสิกส์(204) 10% รวม 100%",
+    "metadata": {
+      "category": "Admission Round",
+      "round": 2,
+      "admission_type": "Quota",
+      "test_type": "NETSAT",
+      "program": "ภูมิสารสนเทศศาสตร์ (GIS)",
+      "minimum_score_percent": 30,
+      "score_weights": {
+        "ภาษาไทย_101": 15,
+        "อังกฤษ_102": 10,
+        "คณิตศาสตร์_103": 20,
+        "วิทยาศาสตร์และเทคโนโลยี_201": 45,
+        "ฟิสิกส์_204": 10
+      },
+      "source_url": "https://computing.kku.ac.th/bsc-entrance"
+    }
+  },
+  {
+    "text": "รอบที่ 2 โควตาภาคตะวันออกเฉียงเหนือ ใช้คะแนน NETSAT เป็นเกณฑ์หลัก โดยต้องมีคะแนนรวมขั้นต่ำไม่น้อยกว่า 30% สาขาปัญญาประดิษฐ์ (AI) ใช้สัดส่วนคะแนน: ภาษาไทย(101) 5%, อังกฤษ(102) 15%, คณิตศาสตร์(103) 25%, วิทย์และเทคโนโลยี(201) 40%, ฟิสิกส์(204) 15% รวม 100%",
+    "metadata": {
+      "category": "Admission Round",
+      "round": 2,
+      "admission_type": "Quota",
+      "test_type": "NETSAT",
+      "program": "ปัญญาประดิษฐ์ (AI)",
+      "minimum_score_percent": 30,
+      "score_weights": {
+        "ภาษาไทย_101": 5,
+        "อังกฤษ_102": 15,
+        "คณิตศาสตร์_103": 25,
+        "วิทยาศาสตร์และเทคโนโลยี_201": 40,
+        "ฟิสิกส์_204": 15
+      },
+      "source_url": "https://computing.kku.ac.th/bsc-entrance"
+    }
+  },
+  {
+    "text": "รอบที่ 2 โควตาภาคตะวันออกเฉียงเหนือ ใช้คะแนน NETSAT เป็นเกณฑ์หลัก โดยต้องมีคะแนนรวมขั้นต่ำไม่น้อยกว่า 30% สาขาความมั่นคงปลอดภัยไซเบอร์ (Cybersecurity) ใช้สัดส่วนคะแนน: ภาษาไทย(101) 15%, อังกฤษ(102) 10%, คณิตศาสตร์(103) 20%, วิทย์และเทคโนโลยี(201) 40%, ฟิสิกส์(204) 15% รวม 100%",
+    "metadata": {
+      "category": "Admission Round",
+      "round": 2,
+      "admission_type": "Quota",
+      "test_type": "NETSAT",
+      "program": "ความมั่นคงปลอดภัยไซเบอร์ (Cybersecurity)",
+      "minimum_score_percent": 30,
+      "score_weights": {
+        "ภาษาไทย_101": 15,
+        "อังกฤษ_102": 10,
+        "คณิตศาสตร์_103": 20,
+        "วิทยาศาสตร์และเทคโนโลยี_201": 40,
+        "ฟิสิกส์_204": 15
+      },
+      "source_url": "https://computing.kku.ac.th/bsc-entrance"
+    }
+  },
+  {
+    "text": "รอบที่ 3 Admission ใช้คะแนน TGAT และ A-Level เป็นเกณฑ์หลัก โดยต้องมีคะแนนรวมขั้นต่ำไม่น้อยกว่า 30% สาขาวิทยาการคอมพิวเตอร์ (CS) ใช้สัดส่วนคะแนน: TGAT2 20%, TGAT3 5%, คณิตศาสตร์1(61) 35%, ฟิสิกส์(64) 15%, เคมี(65) 0%, ชีววิทยา(66) 0%, อังกฤษ(82) 25% รวม 100%",
+    "metadata": {
+      "category": "Admission Round",
+      "round": 3,
+      "admission_type": "Admission",
+      "test_type": "TGAT/A-Level",
+      "program": "วิทยาการคอมพิวเตอร์ (CS)",
+      "minimum_score_percent": 30,
+      "score_weights": {
+        "TGAT2": 20,
+        "TGAT3": 5,
+        "คณิตศาสตร์1_61": 35,
+        "ฟิสิกส์_64": 15,
+        "เคมี_65": 0,
+        "ชีววิทยา_66": 0,
+        "อังกฤษ_82": 25
+      },
+      "source_url": "https://computing.kku.ac.th/bsc-entrance"
+    }
+  },
+  {
+    "text": "รอบที่ 3 Admission ใช้คะแนน TGAT และ A-Level เป็นเกณฑ์หลัก โดยต้องมีคะแนนรวมขั้นต่ำไม่น้อยกว่า 30% สาขาเทคโนโลยีสารสนเทศและนวัตกรรมอัจฉริยะ (ITII) ใช้สัดส่วนคะแนน: TGAT2 20%, TGAT3 0%, คณิตศาสตร์1(61) 30%, ฟิสิกส์(64) 25%, เคมี(65) 0%, ชีววิทยา(66) 0%, อังกฤษ(82) 25% รวม 100%",
+    "metadata": {
+      "category": "Admission Round",
+      "round": 3,
+      "admission_type": "Admission",
+      "test_type": "TGAT/A-Level",
+      "program": "เทคโนโลยีสารสนเทศและนวัตกรรมอัจฉริยะ (ITII)",
+      "minimum_score_percent": 30,
+      "score_weights": {
+        "TGAT2": 20,
+        "TGAT3": 0,
+        "คณิตศาสตร์1_61": 30,
+        "ฟิสิกส์_64": 25,
+        "เคมี_65": 0,
+        "ชีววิทยา_66": 0,
+        "อังกฤษ_82": 25
+      },
+      "source_url": "https://computing.kku.ac.th/bsc-entrance"
+    }
+  },
+  {
+    "text": "รอบที่ 3 Admission ใช้คะแนน TGAT และ A-Level เป็นเกณฑ์หลัก โดยต้องมีคะแนนรวมขั้นต่ำไม่น้อยกว่า 30% สาขาภูมิสารสนเทศศาสตร์ (GIS) ใช้สัดส่วนคะแนน: TGAT2 20%, TGAT3 5%, คณิตศาสตร์1(61) 25%, ฟิสิกส์(64) 15%, เคมี(65) 10%, ชีววิทยา(66) 10%, อังกฤษ(82) 15% รวม 100%",
+    "metadata": {
+      "category": "Admission Round",
+      "round": 3,
+      "admission_type": "Admission",
+      "test_type": "TGAT/A-Level",
+      "program": "ภูมิสารสนเทศศาสตร์ (GIS)",
+      "minimum_score_percent": 30,
+      "score_weights": {
+        "TGAT2": 20,
+        "TGAT3": 5,
+        "คณิตศาสตร์1_61": 25,
+        "ฟิสิกส์_64": 15,
+        "เคมี_65": 10,
+        "ชีววิทยา_66": 10,
+        "อังกฤษ_82": 15
+      },
+      "source_url": "https://computing.kku.ac.th/bsc-entrance"
+    }
+  },
+  {
+    "text": "รอบที่ 3 Admission ใช้คะแนน TGAT และ A-Level เป็นเกณฑ์หลัก โดยต้องมีคะแนนรวมขั้นต่ำไม่น้อยกว่า 30% สาขาปัญญาประดิษฐ์ (AI) ใช้สัดส่วนคะแนน: TGAT2 20%, TGAT3 5%, คณิตศาสตร์1(61) 35%, ฟิสิกส์(64) 15%, เคมี(65) 0%, ชีววิทยา(66) 0%, อังกฤษ(82) 25% รวม 100%",
+    "metadata": {
+      "category": "Admission Round",
+      "round": 3,
+      "admission_type": "Admission",
+      "test_type": "TGAT/A-Level",
+      "program": "ปัญญาประดิษฐ์ (AI)",
+      "minimum_score_percent": 30,
+      "score_weights": {
+        "TGAT2": 20,
+        "TGAT3": 5,
+        "คณิตศาสตร์1_61": 35,
+        "ฟิสิกส์_64": 15,
+        "เคมี_65": 0,
+        "ชีววิทยา_66": 0,
+        "อังกฤษ_82": 25
+      },
+      "source_url": "https://computing.kku.ac.th/bsc-entrance"
+    }
+  },
+  {
+    "text": "รอบที่ 3 Admission ใช้คะแนน TGAT และ A-Level เป็นเกณฑ์หลัก โดยต้องมีคะแนนรวมขั้นต่ำไม่น้อยกว่า 30% สาขาความมั่นคงปลอดภัยไซเบอร์ (Cybersecurity) ใช้สัดส่วนคะแนน: TGAT2 30%, TGAT3 0%, คณิตศาสตร์1(61) 35%, ฟิสิกส์(64) 10%, เคมี(65) 0%, ชีววิทยา(66) 0%, อังกฤษ(82) 25% รวม 100%",
+    "metadata": {
+      "category": "Admission Round",
+      "round": 3,
+      "admission_type": "Admission",
+      "test_type": "TGAT/A-Level",
+      "program": "ความมั่นคงปลอดภัยไซเบอร์ (Cybersecurity)",
+      "minimum_score_percent": 30,
+      "score_weights": {
+        "TGAT2": 30,
+        "TGAT3": 0,
+        "คณิตศาสตร์1_61": 35,
+        "ฟิสิกส์_64": 10,
+        "เคมี_65": 0,
+        "ชีววิทยา_66": 0,
+        "อังกฤษ_82": 25
+      },
+      "source_url": "https://computing.kku.ac.th/bsc-entrance"
+    }
+  },
+  {
+    "text": "ค่าธรรมเนียมการศึกษารายภาคเรียน (สำหรับนักศึกษาใหม่ตั้งแต่ปีการศึกษา 2565 เป็นต้นไป) สาขาวิทยาการคอมพิวเตอร์ (CS): ภาคปกติ 15,000 บาท, โครงการพิเศษ 30,000 บาท",
+    "metadata": {
+      "category": "Tuition Fees",
+      "program": "วิทยาการคอมพิวเตอร์ (CS)",
+      "regular_fee_baht": 15000,
+      "special_fee_baht": 30000,
+      "fee_period": "per_semester",
+      "effective_from": "2565",
+      "source_url": "https://computing.kku.ac.th/bsc-entrance"
+    }
+  },
+  {
+    "text": "ค่าธรรมเนียมการศึกษารายภาคเรียน (สำหรับนักศึกษาใหม่ตั้งแต่ปีการศึกษา 2565 เป็นต้นไป) สาขาเทคโนโลยีสารสนเทศและนวัตกรรมอัจฉริยะ (ITII): ภาคปกติ 15,000 บาท, ไม่เปิดรับโครงการพิเศษ",
+    "metadata": {
+      "category": "Tuition Fees",
+      "program": "เทคโนโลยีสารสนเทศและนวัตกรรมอัจฉริยะ (ITII)",
+      "regular_fee_baht": 15000,
+      "special_fee_baht": null,
+      "fee_period": "per_semester",
+      "effective_from": "2565",
+      "source_url": "https://computing.kku.ac.th/bsc-entrance"
+    }
+  },
+  {
+    "text": "ค่าธรรมเนียมการศึกษารายภาคเรียน (สำหรับนักศึกษาใหม่ตั้งแต่ปีการศึกษา 2565 เป็นต้นไป) สาขาภูมิสารสนเทศศาสตร์ (GIS): ภาคปกติ 15,000 บาท, ไม่เปิดรับโครงการพิเศษ",
+    "metadata": {
+      "category": "Tuition Fees",
+      "program": "ภูมิสารสนเทศศาสตร์ (GIS)",
+      "regular_fee_baht": 15000,
+      "special_fee_baht": null,
+      "fee_period": "per_semester",
+      "effective_from": "2565",
+      "source_url": "https://computing.kku.ac.th/bsc-entrance"
+    }
+  },
+  {
+    "text": "ค่าธรรมเนียมการศึกษารายภาคเรียน (สำหรับนักศึกษาใหม่ตั้งแต่ปีการศึกษา 2565 เป็นต้นไป) สาขาปัญญาประดิษฐ์ (AI): ภาคปกติ 30,000 บาท, โครงการพิเศษ 40,000 บาท",
+    "metadata": {
+      "category": "Tuition Fees",
+      "program": "ปัญญาประดิษฐ์ (AI)",
+      "regular_fee_baht": 30000,
+      "special_fee_baht": 40000,
+      "fee_period": "per_semester",
+      "effective_from": "2565",
+      "source_url": "https://computing.kku.ac.th/bsc-entrance"
+    }
+  },
+  {
+    "text": "ค่าธรรมเนียมการศึกษารายภาคเรียน (สำหรับนักศึกษาใหม่ตั้งแต่ปีการศึกษา 2565 เป็นต้นไป) สาขาความมั่นคงปลอดภัยไซเบอร์ (Cybersecurity): ภาคปกติ 30,000 บาท, โครงการพิเศษ 40,000 บาท หมายเหตุ: ค่าธรรมเนียมภาคฤดูร้อนคิดเป็นครึ่งหนึ่งของราคาปกติ",
+    "metadata": {
+      "category": "Tuition Fees",
+      "program": "ความมั่นคงปลอดภัยไซเบอร์ (Cybersecurity)",
+      "regular_fee_baht": 30000,
+      "special_fee_baht": 40000,
+      "fee_period": "per_semester",
+      "effective_from": "2565",
+      "note": "ค่าธรรมเนียมภาคฤดูร้อนคิดเป็นครึ่งหนึ่งของราคาปกติ",
+      "source_url": "https://computing.kku.ac.th/bsc-entrance"
+    }
+  },
+  {
+    "text": "ข้อมูลการติดต่อเพิ่มเติมสำหรับการรับเข้าศึกษาวิทยาลัยการคอมพิวเตอร์ มข.: งานรับเข้าศึกษา มข. โทร 09-5671-6259, 09-5669-4704, 0-4320-2660 | เจ้าหน้าที่วิทยาลัยฯ: คุณฉันทนา เรืองวงศ์วิทยา อีเมล mchant@kku.ac.th | สายด่วนวิทยาลัยฯ: 089-710-2651, 089-710-2645 | เว็บไซต์หลัก: https://admissions.kku.ac.th",
+    "metadata": {
+      "category": "Contact Info",
+      "contacts": [
+        {
+          "department": "งานรับเข้าศึกษา มข.",
+          "phones": ["09-5671-6259", "09-5669-4704", "0-4320-2660"]
+        },
+        {
+          "name": "คุณฉันทนา เรืองวงศ์วิทยา",
+          "role": "เจ้าหน้าที่วิทยาลัยฯ",
+          "email": "mchant@kku.ac.th"
+        },
+        {
+          "department": "สายด่วนวิทยาลัยฯ",
+          "phones": ["089-710-2651", "089-710-2645"]
+        }
+      ],
+      "website": "https://admissions.kku.ac.th",
+      "source_url": "https://computing.kku.ac.th/bsc-entrance"
+    }
+  }
+]

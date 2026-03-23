@@ -4,7 +4,6 @@ const { MongoClient } = require("mongodb");
 const { ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings } = require("@langchain/google-genai");
 const { PDFLoader } = require("@langchain/community/document_loaders/fs/pdf");
 const { TextLoader } = require("langchain/document_loaders/fs/text");
-const { JSONLoader } = require("langchain/document_loaders/fs/json");
 const { RecursiveCharacterTextSplitter } = require("langchain/text_splitter");
 const { MongoDBAtlasVectorSearch } = require("@langchain/mongodb");
 const { createRetrievalChain } = require("langchain/chains/retrieval");
@@ -27,28 +26,50 @@ const loadAndSplitDocuments = async () => {
 
   for (const file of files) {
     const filePath = path.join(DATA_DIR, file);
+    console.log(`Processing file: ${file}`);
     let loader;
 
-    if (file.endsWith(".pdf")) {
-      loader = new PDFLoader(filePath);
-    } else if (file.endsWith(".txt")) {
-      loader = new TextLoader(filePath);
-    } else if (file.endsWith(".json")) {
-      loader = new JSONLoader(filePath);
-    } else {
-      continue;
+    try {
+      if (file.endsWith(".pdf")) {
+        loader = new PDFLoader(filePath);
+        const docs = await loader.load();
+        allDocs = allDocs.concat(docs.map(doc => ({ ...doc, metadata: { ...doc.metadata, source: file } })));
+      } else if (file.endsWith(".txt") || file.endsWith(".md")) {
+        loader = new TextLoader(filePath);
+        const docs = await loader.load();
+        allDocs = allDocs.concat(docs.map(doc => ({ ...doc, metadata: { ...doc.metadata, source: file } })));
+      } else if (file.endsWith(".json")) {
+        // แนะนำให้โหลด JSON แบบกำหนดเองเพื่อให้ได้ Text และ Metadata ที่ครบถ้วน
+        const content = fs.readFileSync(filePath, "utf-8");
+        const jsonData = JSON.parse(content);
+        
+        if (Array.isArray(jsonData)) {
+          jsonData.forEach((item, index) => {
+            if (item.text) {
+              allDocs.push({
+                pageContent: item.text,
+                metadata: { ...(item.metadata || {}), source: file, index }
+              });
+            }
+          });
+          console.log(`  - Extracted ${jsonData.length} items from JSON array`);
+        } else if (jsonData.text) {
+          allDocs.push({
+            pageContent: jsonData.text,
+            metadata: { ...(jsonData.metadata || {}), source: file }
+          });
+          console.log(`  - Extracted 1 item from JSON object`);
+        }
+      } else {
+        continue;
+      }
+    } catch (err) {
+      console.error(`Error loading ${file}:`, err.message);
     }
-
-    const docs = await loader.load();
-    const docsWithMetadata = docs.map(doc => {
-      doc.metadata.source = file;
-      return doc;
-    });
-    allDocs = allDocs.concat(docsWithMetadata);
   }
 
   if (allDocs.length === 0) {
-    throw new Error("ไม่พบเอกสารใน data/ folder กรุณาเพิ่มไฟล์ .pdf หรือ .txt");
+    throw new Error("ไม่พบข้อความที่สามารถนำไปทำ Index ได้ในโฟลเดอร์ data/ กรุณาตรวจสอบรูปแบบไฟล์ JSON หรือเพิ่มไฟล์ .pdf, .txt, .md");
   }
 
   const splitter = new RecursiveCharacterTextSplitter({
@@ -56,7 +77,9 @@ const loadAndSplitDocuments = async () => {
     chunkOverlap: CHUNK_OVERLAP,
   });
 
-  return splitter.splitDocuments(allDocs);
+  const splitDocs = await splitter.splitDocuments(allDocs);
+  console.log(`Total documents loaded: ${allDocs.length}, Split into ${splitDocs.length} chunks`);
+  return splitDocs;
 };
 
 const buildVectorStore = async () => {
@@ -165,9 +188,12 @@ const syncKnowledgeBase = async () => {
     await collection.deleteMany({});
 
     vectorStore = null; // Reset vectorStore to force rebuild
-    await buildVectorStore();
-
+    await buildVectorStore(); // This will initialize vectorStore and loadDocuments if count is 0
+    
+    // We can call countDocuments to get the final count for the message
     const count = await collection.countDocuments();
+    console.log(`Knowledge base synced: ${count} chunks indexed.`);
+
     return { success: true, message: `Knowledge base synced successfully. Now contains ${count} chunks.` };
   } catch (err) {
     console.error("Error syncing knowledge base:", err);

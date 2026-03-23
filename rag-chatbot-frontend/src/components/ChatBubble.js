@@ -49,11 +49,10 @@ const ChatBubble = ({ text, sender, timestamp }) => {
           borderRadius: isUser
             ? "18px 18px 4px 18px"
             : "18px 18px 18px 4px",
-          bgcolor: isUser ? "primary.main" : "background.paper",
-          color: isUser ? "primary.contrastText" : "text.primary",
-          boxShadow: isUser
-            ? "0 4px 14px rgba(26, 35, 126, 0.3)"
-            : "0 2px 10px rgba(0, 0, 0, 0.08)",
+          bgcolor: isUser ? (isUser && "primary.light" ? "rgba(26, 35, 126, 0.08)" : "#f0f2f5") : "background.paper",
+          color: "text.primary",
+          border: isUser ? "1px solid rgba(26, 35, 126, 0.12)" : "1px solid rgba(0, 0, 0, 0.05)",
+          boxShadow: "0 2px 12px rgba(0, 0, 0, 0.05)",
           position: "relative",
           transition: "transform 0.15s ease",
           "&:hover": {
@@ -65,7 +64,7 @@ const ChatBubble = ({ text, sender, timestamp }) => {
           sx={{
             "& p": { m: 0, mb: 1.5, lineHeight: 1.6 },
             "& p:last-child": { mb: 0 },
-            "& strong": { color: isUser ? "inherit" : "primary.main", fontWeight: 700 },
+            "& strong": { color: "inherit", fontWeight: 700 },
             "& ul, & ol": { mt: 1, mb: 1.5, pl: 2.5 },
             "& li": { mb: 0.5 },
             fontSize: "0.95rem",
@@ -85,7 +84,7 @@ const ChatBubble = ({ text, sender, timestamp }) => {
                   {...props} 
                   target="_blank" 
                   rel="noopener noreferrer" 
-                  style={{ color: isUser ? "inherit" : "#5c6bc0", fontWeight: 600 }}
+                  style={{ color: "inherit", textDecoration: "underline", fontWeight: 600 }}
                 />
               )
             }}
