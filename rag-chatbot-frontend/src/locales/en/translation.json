@@ -34,7 +34,7 @@
     "error_delete": "Failed to delete session. Please try again.",
     "new_topic": "New Topic",
     "guest_name": "Guest",
-    "sync_success": "Knowledge base has been successfully synchronized!",
+    "sync_success": "The database has been reorganized successfully!",
     "sync_error": "An error occurred while syncing knowledge. Please try again."
   },
   "suggestions": {
@@ -52,10 +52,10 @@
     "back_chat": "Back to Chat",
     "dashboard_title": "Admin Dashboard",
     "portal_title": "Management Portal",
-    "portal_subtitle": "Manage knowledge files and update AI database",
-    "sync_button": "Sync Knowledge Base",
+    "portal_subtitle": "Manage data files and update AI database",
+    "sync_button": "Sync Database",
     "syncing": "Syncing...",
-    "upload_title": "Upload Knowledge",
+    "upload_title": "Upload Files",
     "upload_desc": "Select cleaned .json files to add new data to the system",
     "select_file": "Select JSON File",
     "uploading": "Uploading...",
@@ -70,6 +70,8 @@
     "success_delete": "File deleted successfully",
     "error_delete": "Failed to delete file",
     "success_sync": "Data synchronized successfully",
-    "error_sync": "An error occurred during synchronization"
+    "error_sync": "An error occurred during synchronization",
+    "switch_language": "ไทย",
+    "language_tooltip": "Switch to Thai"
   }
 }

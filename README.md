@@ -1,5 +1,7 @@
 # 🎓 Admission RAG Chatbot – CP KKU
 
+[![GitHub Repository](https://img.shields.io/badge/GitHub-Repository-blue?logo=github)](https://github.com/itthikorn08/Rag-Chatbot-CP-KKU)
+
 ระบบ Chatbot ตอบคำถามเกี่ยวกับระเบียบการรับสมัครเข้าศึกษา  
 วิทยาลัยการคอมพิวเตอร์ มหาวิทยาลัยขอนแก่น  
 
@@ -59,7 +61,7 @@
 ### 1. Clone & Install
 
 ```bash
-git clone <repo-url>
+git clone https://github.com/itthikorn08/Rag-Chatbot-CP-KKU.git
 cd Rag-Chatbot-CP-KKU
 
 # Install backend

@@ -26,12 +26,13 @@ import {
   InsertDriveFileRounded as FileIcon,
   ArrowBackRounded as ArrowBackIcon,
   RefreshRounded as RefreshIcon,
+  LanguageRounded as LanguageIcon,
 } from "@mui/icons-material";
 import { listAdminFiles, uploadAdminJson, deleteAdminFile, syncKnowledge } from "../api/chatApi";
 import { useTranslation } from "react-i18next";
 
 const AdminPage = ({ onBack }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [files, setFiles] = useState([]);
   const [loading, setLoading] = useState(false);
   const [syncing, setSyncing] = useState(false);
@@ -76,6 +77,8 @@ const AdminPage = ({ onBack }) => {
       await uploadAdminJson(formData);
       setSuccess(t("admin.success_upload"));
       loadFiles();
+      // Auto Sync after upload
+      handleSync();
     } catch (err) {
       setError(t("admin.error_upload"));
     } finally {
@@ -90,6 +93,8 @@ const AdminPage = ({ onBack }) => {
       await deleteAdminFile(filename);
       setSuccess(t("admin.success_delete"));
       setFiles(files.filter((f) => f.name !== filename));
+      // Auto Sync after delete
+      handleSync();
     } catch (err) {
       setError(t("admin.error_delete"));
     }
@@ -107,6 +112,11 @@ const AdminPage = ({ onBack }) => {
     } finally {
       setSyncing(false);
     }
+  };
+
+  const handleLanguageToggle = () => {
+    const nextLang = i18n.language === "th" ? "en" : "th";
+    i18n.changeLanguage(nextLang);
   };
 
   return (
@@ -136,16 +146,34 @@ const AdminPage = ({ onBack }) => {
             </Typography>
           </Box>
 
-          <Button
-            variant="contained"
-            color="secondary"
-            startIcon={syncing ? <CircularProgress size={20} color="inherit" /> : <SyncIcon />}
-            onClick={handleSync}
-            disabled={syncing}
-            sx={{ borderRadius: 2, px: 3, py: 1, fontWeight: 600, boxShadow: 3 }}
-          >
-            {syncing ? t("admin.syncing") : t("admin.sync_button")}
-          </Button>
+          <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
+            <Tooltip title={t("admin.language_tooltip")}>
+              <Button
+                variant="outlined"
+                color="primary"
+                startIcon={<LanguageIcon />}
+                onClick={handleLanguageToggle}
+                sx={{ 
+                  borderRadius: 2, 
+                  px: 2, 
+                  fontWeight: 600,
+                  borderWidth: 2,
+                  "&:hover": { borderWidth: 2 }
+                }}
+              >
+                {t("admin.switch_language")}
+              </Button>
+            </Tooltip>
+
+            {syncing && (
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1, bgcolor: "secondary.main", color: "white", px: 2, py: 1, borderRadius: 2, boxShadow: 2 }}>
+                <CircularProgress size={16} color="inherit" />
+                <Typography variant="body2" fontWeight={600}>
+                  {t("admin.syncing")}
+                </Typography>
+              </Box>
+            )}
+          </Box>
         </Box>
 
         {error && (
