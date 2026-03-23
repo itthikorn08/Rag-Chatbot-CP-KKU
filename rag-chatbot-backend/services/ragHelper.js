@@ -26,7 +26,7 @@ const loadAndSplitDocuments = async () => {
 
   for (const file of files) {
     const filePath = path.join(DATA_DIR, file);
-    console.log(`Processing file: ${file}`);
+    console.log(`Processing file for indexing: ${file}`);
     let loader;
 
     try {
@@ -39,10 +39,9 @@ const loadAndSplitDocuments = async () => {
         const docs = await loader.load();
         allDocs = allDocs.concat(docs.map(doc => ({ ...doc, metadata: { ...doc.metadata, source: file } })));
       } else if (file.endsWith(".json")) {
-        // แนะนำให้โหลด JSON แบบกำหนดเองเพื่อให้ได้ Text และ Metadata ที่ครบถ้วน
         const content = fs.readFileSync(filePath, "utf-8");
         const jsonData = JSON.parse(content);
-        
+
         if (Array.isArray(jsonData)) {
           jsonData.forEach((item, index) => {
             if (item.text) {
@@ -52,16 +51,12 @@ const loadAndSplitDocuments = async () => {
               });
             }
           });
-          console.log(`  - Extracted ${jsonData.length} items from JSON array`);
         } else if (jsonData.text) {
           allDocs.push({
             pageContent: jsonData.text,
             metadata: { ...(jsonData.metadata || {}), source: file }
           });
-          console.log(`  - Extracted 1 item from JSON object`);
         }
-      } else {
-        continue;
       }
     } catch (err) {
       console.error(`Error loading ${file}:`, err.message);
@@ -69,7 +64,7 @@ const loadAndSplitDocuments = async () => {
   }
 
   if (allDocs.length === 0) {
-    throw new Error("ไม่พบข้อความที่สามารถนำไปทำ Index ได้ในโฟลเดอร์ data/ กรุณาตรวจสอบรูปแบบไฟล์ JSON หรือเพิ่มไฟล์ .pdf, .txt, .md");
+    throw new Error("ไม่พบข้อความที่สามารถนำไปทำ Index ได้");
   }
 
   const splitter = new RecursiveCharacterTextSplitter({
@@ -77,9 +72,7 @@ const loadAndSplitDocuments = async () => {
     chunkOverlap: CHUNK_OVERLAP,
   });
 
-  const splitDocs = await splitter.splitDocuments(allDocs);
-  console.log(`Total documents loaded: ${allDocs.length}, Split into ${splitDocs.length} chunks`);
-  return splitDocs;
+  return await splitter.splitDocuments(allDocs);
 };
 
 const buildVectorStore = async () => {
@@ -128,7 +121,7 @@ const getAnswer = async (question, chatHistory = []) => {
     const llm = new ChatGoogleGenerativeAI({
       apiKey: apiKey,
       model: "models/gemini-2.5-flash",
-      temperature: 0,
+      temperature: 0.1,
     });
 
     const prompt = ChatPromptTemplate.fromMessages([
@@ -143,10 +136,14 @@ const getAnswer = async (question, chatHistory = []) => {
 3. **ความถูกต้องและปีการศึกษา:** 
    - ตอบโดยใช้ข้อมูลจากบริบท (Context) ที่กำหนดให้เท่านั้น 
    - **สำคัญมาก:** ให้ระบุด้วยเสมอว่าข้อมูลที่ตอบนั้นอ้างอิงสำหรับ **"ปีการศึกษาใด"** (เช่น "อ้างอิงจากข้อมูลปีการศึกษา 2568-2569") หากใน Context มีระบุไว้
+   - **ลำดับความสำคัญของข้อมูล:** ในกรณีที่ผู้ใช้ไม่ได้ระบุปีการศึกษาในคำถาม **ให้เลือกใช้และตอบด้วยข้อมูลของปีการศึกษาล่าสุดเสมอ** (เช่น ปี 2569) หากมีข้อมูลหลายปีขัดแย้งกัน
 4. **การแนะนำเว็บไซต์:** 
    - ให้แนะนำลิงก์เว็บไซต์คณะโดยตรงคือ https://computing.kku.ac.th/bsc-entrance เพื่อดูรายละเอียดหลักสูตรและเกณฑ์เฉพาะของวิทยาลัย
    - พร้อมทั้งแนะนำเว็บไซต์การรับสมัคร มข. (ส่วนกลาง) คือ https://admissions.kku.ac.th เพื่อติดตามสถานะและประกาศภาพรวมของมหาวิทยาลัย
 5. ตอบตามภาษาที่ผู้ใช้ถาม
+6. **การเปรียบเทียบสาขา:** หากผู้ใช้ถามถึงความแตกต่างระหว่างสาขา ให้ดึงข้อมูลจาก Context ที่เป็นการเปรียบเทียบมาตอบเป็นอันดับแรก และหากต้องเปรียบเทียบเอง ให้ระบุความแตกต่างทีละหัวข้อ (เช่น วัตถุประสงค์หลัก, ค่าเทอม, เกณฑ์การรับ) เพื่อให้ข้อมูลที่ชัดเจนและไม่สับสน
+7. **การจัดการคำถามที่ไม่ชัดเจน:** หากผู้ใช้ถามคำถามที่กว้างเกินไปหรือไม่ระบุสาขาที่ต้องการทราบอย่างชัดเจน (เช่น ถามแค่ "เกณฑ์คะแนนใช้เท่าไหร่?" หรือ "ต้องเตรียมตัวอย่างไร?") ให้ตอบกลับโดยขอความร่วมมือจากผู้ใช้ช่วยระบุสาขาที่สนใจจาก 5 สาขาของวิทยาลัย ได้แก่: **วิทยาการคอมพิวเตอร์ (CS)**, **เทคโนโลยีสารสนเทศ (IT)**, **ภูมิสารสนเทศศาสตร์ (GIS)**, **ปัญญาประดิษฐ์ (AI)** และ **ความมั่นคงปลอดภัยไซเบอร์ (Cybersecurity)** เพื่อให้ข้อมูลที่ถูกต้องแม่นยำที่สุด
+8. **ลำดับความสำคัญของเวลา:** หากใน Context มีข้อมูลหลายเวอร์ชันที่ขัดแย้งกัน ให้ยึดถือข้อมูลที่ใหม่ที่สุดเป็นเกณฑ์
 Context:
 {context}`],
       new MessagesPlaceholder("chat_history"),
@@ -160,7 +157,7 @@ Context:
 
     const retriever = RunnableSequence.from([
       (input) => input.input,
-      store.asRetriever(4),
+      store.asRetriever(10),
     ]);
 
     const chain = await createRetrievalChain({
@@ -168,7 +165,7 @@ Context:
       combineDocsChain,
     });
 
-    console.log(`Querying: "${question}"`);
+    console.log(`Querying with Vector Store: "${question}"`);
     const response = await chain.invoke({
       input: question,
       chat_history: chatHistory,
@@ -187,10 +184,9 @@ const syncKnowledgeBase = async () => {
     console.log("Syncing knowledge base: Clearing existing documents...");
     await collection.deleteMany({});
 
-    vectorStore = null; // Reset vectorStore to force rebuild
-    await buildVectorStore(); // This will initialize vectorStore and loadDocuments if count is 0
-    
-    // We can call countDocuments to get the final count for the message
+    vectorStore = null;
+    await buildVectorStore();
+
     const count = await collection.countDocuments();
     console.log(`Knowledge base synced: ${count} chunks indexed.`);
 

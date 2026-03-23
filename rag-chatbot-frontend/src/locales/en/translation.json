@@ -71,6 +71,7 @@
     "error_delete": "Failed to delete file",
     "success_sync": "Data synchronized successfully",
     "error_sync": "An error occurred during synchronization",
+    "delete_button": "Delete",
     "switch_language": "ไทย",
     "language_tooltip": "Switch to Thai"
   }

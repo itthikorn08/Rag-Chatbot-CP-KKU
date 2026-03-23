@@ -18,6 +18,8 @@ import {
   Tooltip,
   Fade,
   Grid,
+  Menu,
+  MenuItem,
 } from "@mui/material";
 import {
   CloudUploadRounded as CloudUploadIcon,
@@ -27,6 +29,7 @@ import {
   ArrowBackRounded as ArrowBackIcon,
   RefreshRounded as RefreshIcon,
   LanguageRounded as LanguageIcon,
+  MoreVertRounded as MoreVertIcon,
 } from "@mui/icons-material";
 import { listAdminFiles, uploadAdminJson, deleteAdminFile, syncKnowledge } from "../api/chatApi";
 import { useTranslation } from "react-i18next";
@@ -39,6 +42,8 @@ const AdminPage = ({ onBack }) => {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
+  const [menuAnchor, setMenuAnchor] = useState(null);
+  const [activeFile, setActiveFile] = useState(null);
 
   const loadFiles = useCallback(async () => {
     setLoading(true);
@@ -115,6 +120,22 @@ const AdminPage = ({ onBack }) => {
   const handleLanguageToggle = () => {
     const nextLang = i18n.language === "th" ? "en" : "th";
     i18n.changeLanguage(nextLang);
+  };
+
+  const handleMenuOpen = (event, filename) => {
+    setMenuAnchor(event.currentTarget);
+    setActiveFile(filename);
+  };
+
+  const handleMenuClose = () => {
+    setMenuAnchor(null);
+    setActiveFile(null);
+  };
+
+  const handleMenuDelete = () => {
+    const filename = activeFile;
+    handleMenuClose();
+    handleDeleteFile(filename);
   };
 
   return (
@@ -279,11 +300,9 @@ const AdminPage = ({ onBack }) => {
                           "&:hover": { bgcolor: "action.hover" },
                         }}
                         secondaryAction={
-                          <Tooltip title={t("admin.delete_tooltip")}>
-                            <IconButton edge="end" color="error" onClick={() => handleDeleteFile(file.name)}>
-                              <DeleteIcon fontSize="small" />
-                            </IconButton>
-                          </Tooltip>
+                          <IconButton edge="end" onClick={(e) => handleMenuOpen(e, file.name)}>
+                            <MoreVertIcon fontSize="small" />
+                          </IconButton>
                         }
                       >
                         <ListItemIcon>
@@ -301,6 +320,32 @@ const AdminPage = ({ onBack }) => {
                   ))
                 )}
               </List>
+              
+              <Menu
+                anchorEl={menuAnchor}
+                open={Boolean(menuAnchor)}
+                onClose={handleMenuClose}
+                transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+                anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+                PaperProps={{
+                  sx: {
+                    mt: 0.5,
+                    borderRadius: 2,
+                    minWidth: 120,
+                    boxShadow: "0px 4px 20px rgba(0,0,0,0.12)"
+                  }
+                }}
+              >
+                <MenuItem 
+                  onClick={handleMenuDelete}
+                  sx={{ color: "error.main", gap: 1.5, py: 1 }}
+                >
+                  <DeleteIcon fontSize="small" />
+                  <Typography variant="body2" fontWeight={600}>
+                    {t("admin.delete_button")}
+                  </Typography>
+                </MenuItem>
+              </Menu>
             </Paper>
           </Grid>
         </Grid>

@@ -71,6 +71,7 @@
     "error_delete": "ไม่สามารถลบไฟล์ได้",
     "success_sync": "ซิงค์ข้อมูลเรียบร้อยแล้ว",
     "error_sync": "เกิดข้อผิดพลาดในการซิงค์ข้อมูล",
+    "delete_button": "ลบ",
     "switch_language": "English",
     "language_tooltip": "เปลี่ยนเป็นภาษาอังกฤษ"
   }

@@ -26,6 +26,8 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
+  Menu,
+  MenuItem,
 } from "@mui/material";
 import { v4 as uuidv4 } from "uuid";
 import SendRoundedIcon from "@mui/icons-material/SendRounded";
@@ -39,7 +41,8 @@ import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import ChatBubbleOutlineRoundedIcon from "@mui/icons-material/ChatBubbleOutlineRounded";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
-import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
+import DeleteIcon from "@mui/icons-material/DeleteRounded";
+import MoreVertIcon from "@mui/icons-material/MoreVertRounded";
 import LanguageRoundedIcon from "@mui/icons-material/LanguageRounded";
 import SyncIcon from "@mui/icons-material/SyncRounded";
 import ChatBubble from "./ChatBubble";
@@ -60,6 +63,8 @@ const ChatPage = ({ onExitGuest, isGuest, isAdmin, onGoAdmin }) => {
   );
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [sessionToDelete, setSessionToDelete] = useState(null);
+  const [sessionMenuAnchor, setSessionMenuAnchor] = useState(null);
+  const [activeSessionId, setActiveSessionId] = useState(null);
   // const [syncing, setSyncing] = useState(false); // Moved to AdminPage
 
   const messagesEndRef = useRef(null);
@@ -200,6 +205,24 @@ const ChatPage = ({ onExitGuest, isGuest, isAdmin, onGoAdmin }) => {
     t("suggestions.schedule"),
   ];
 
+  const handleSessionMenuOpen = (event, sessionId) => {
+    event.stopPropagation();
+    setSessionMenuAnchor(event.currentTarget);
+    setActiveSessionId(sessionId);
+  };
+
+  const handleSessionMenuClose = () => {
+    setSessionMenuAnchor(null);
+    setActiveSessionId(null);
+  };
+
+  const handleSessionMenuDelete = () => {
+    const sessionId = activeSessionId;
+    handleSessionMenuClose();
+    setSessionToDelete(sessionId);
+    setDeleteDialogOpen(true);
+  };
+
   const handleDeleteSession = (e, sessionId) => {
     e.stopPropagation();
     setSessionToDelete(sessionId);
@@ -297,34 +320,15 @@ const ChatPage = ({ onExitGuest, isGuest, isAdmin, onGoAdmin }) => {
                 <ListItem
                   key={session._id}
                   disablePadding
-                  sx={{
-                    mb: 0.5,
-                    "&:hover .delete-session-btn": {
-                      opacity: 1
-                    }
-                  }}
+                  sx={{ mb: 0.5 }}
                   secondaryAction={
                     <IconButton
                       edge="end"
-                      aria-label="delete"
-                      onClick={(e) => {
-                        console.log("Delete clicked for session:", session._id);
-                        handleDeleteSession(e, session._id);
-                      }}
-                      sx={{
-                        opacity: 0.4,
-                        transition: "all 0.2s",
-                        color: mode === "dark" ? "#ff8a80" : "error.main",
-                        zIndex: 2,
-                        "&:hover": {
-                          opacity: 1,
-                          bgcolor: "error.light",
-                          color: "#fff"
-                        }
-                      }}
-                      className="delete-session-btn"
+                      size="small"
+                      onClick={(e) => handleSessionMenuOpen(e, session._id)}
+                      sx={{ transition: "all 0.2s" }}
                     >
-                      <DeleteRoundedIcon fontSize="small" />
+                      <MoreVertIcon fontSize="small" />
                     </IconButton>
                   }
                 >
@@ -363,6 +367,32 @@ const ChatPage = ({ onExitGuest, isGuest, isAdmin, onGoAdmin }) => {
                 </Typography>
               )}
             </List>
+
+            <Menu
+              anchorEl={sessionMenuAnchor}
+              open={Boolean(sessionMenuAnchor)}
+              onClose={handleSessionMenuClose}
+              transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+              anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+              PaperProps={{
+                sx: {
+                  mt: 0.5,
+                  borderRadius: 2,
+                  minWidth: 120,
+                  boxShadow: "0px 4px 20px rgba(0,0,0,0.12)"
+                }
+              }}
+            >
+              <MenuItem 
+                onClick={handleSessionMenuDelete}
+                sx={{ color: "error.main", gap: 1.5, py: 1 }}
+              >
+                <DeleteIcon fontSize="small" />
+                <Typography variant="body2" fontWeight={600}>
+                  {t("admin.delete_button")}
+                </Typography>
+              </MenuItem>
+            </Menu>
 
             <Divider sx={{ my: 2 }} />
 
