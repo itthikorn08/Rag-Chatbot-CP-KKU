@@ -46,5 +46,30 @@
     "or": "or",
     "logged_in": "Logged In",
     "hello": "Hello"
+  },
+  "admin": {
+    "go_dashboard": "Go to Admin Dashboard",
+    "back_chat": "Back to Chat",
+    "dashboard_title": "Admin Dashboard",
+    "portal_title": "Management Portal",
+    "portal_subtitle": "Manage knowledge files and update AI database",
+    "sync_button": "Sync Knowledge Base",
+    "syncing": "Syncing...",
+    "upload_title": "Upload Knowledge",
+    "upload_desc": "Select cleaned .json files to add new data to the system",
+    "select_file": "Select JSON File",
+    "uploading": "Uploading...",
+    "files_title": "Knowledge Files",
+    "no_files": "No files found in the system",
+    "delete_tooltip": "Delete file",
+    "delete_confirm": "Are you sure you want to delete file {{filename}}?",
+    "error_load_files": "Unable to load file list",
+    "error_invalid_type": "Please select only .json files",
+    "success_upload": "File uploaded successfully",
+    "error_upload": "An error occurred during upload",
+    "success_delete": "File deleted successfully",
+    "error_delete": "Failed to delete file",
+    "success_sync": "Data synchronized successfully",
+    "error_sync": "An error occurred during synchronization"
   }
 }

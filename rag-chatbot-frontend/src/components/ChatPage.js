@@ -284,7 +284,7 @@ const ChatPage = ({ onExitGuest, isGuest, isAdmin, onGoAdmin }) => {
                   "&:hover": { bgcolor: "primary.light", color: "white" },
                 }}
               >
-                Go to Admin Dashboard
+                {t("admin.go_dashboard")}
               </Button>
             )}
 

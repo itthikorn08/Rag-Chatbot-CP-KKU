@@ -46,11 +46,11 @@ const AdminPage = ({ onBack }) => {
       setFiles(data);
       setError(null);
     } catch (err) {
-      setError("ไม่สามารถโหลดรายการไฟล์ได้");
+      setError(t("admin.error_load_files"));
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [t]);
 
   useEffect(() => {
     loadFiles();
@@ -61,7 +61,7 @@ const AdminPage = ({ onBack }) => {
     if (!file) return;
 
     if (!file.name.endsWith(".json")) {
-      setError("กรุณาเลือกไฟล์ .json เท่านั้น");
+      setError(t("admin.error_invalid_type"));
       return;
     }
 
@@ -74,23 +74,24 @@ const AdminPage = ({ onBack }) => {
 
     try {
       await uploadAdminJson(formData);
-      setSuccess("อัปโหลดไฟล์เรียบร้อยแล้ว");
+      setSuccess(t("admin.success_upload"));
       loadFiles();
     } catch (err) {
-      setError("เกิดข้อผิดพลาดในการอัปโหลด");
+      setError(t("admin.error_upload"));
     } finally {
       setUploading(false);
     }
   };
 
   const handleDeleteFile = async (filename) => {
-    if (!window.confirm(`คุณต้องการลบไฟล์ ${filename} ใช่หรือไม่?`)) return;
+    if (!window.confirm(t("admin.delete_confirm", { filename }))) return;
 
     try {
       await deleteAdminFile(filename);
+      setSuccess(t("admin.success_delete"));
       setFiles(files.filter((f) => f.name !== filename));
     } catch (err) {
-      setError("ไม่สามารถลบไฟล์ได้");
+      setError(t("admin.error_delete"));
     }
   };
 
@@ -100,9 +101,9 @@ const AdminPage = ({ onBack }) => {
     setError(null);
     try {
       const result = await syncKnowledge();
-      setSuccess(result.message || "ซิงค์ข้อมูลเรียบร้อยแล้ว");
+      setSuccess(t("admin.success_sync"));
     } catch (err) {
-      setError("เกิดข้อผิดพลาดในการซิงค์ข้อมูล");
+      setError(t("admin.error_sync"));
     } finally {
       setSyncing(false);
     }
@@ -121,17 +122,17 @@ const AdminPage = ({ onBack }) => {
                 sx={{ display: "flex", alignItems: "center", gap: 0.5, color: "text.secondary", textDecoration: "none" }}
               >
                 <ArrowBackIcon fontSize="inherit" />
-                Back to Chat
+                {t("admin.back_chat")}
               </Link>
               <Typography color="text.primary" variant="body2">
-                Admin Dashboard
+                {t("admin.dashboard_title")}
               </Typography>
             </Breadcrumbs>
             <Typography variant="h4" fontWeight={700} color="primary">
-              Management Portal
+              {t("admin.portal_title")}
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              จัดการไฟล์ความรู้และปรับปรุงฐานข้อมูล AI
+              {t("admin.portal_subtitle")}
             </Typography>
           </Box>
 
@@ -143,7 +144,7 @@ const AdminPage = ({ onBack }) => {
             disabled={syncing}
             sx={{ borderRadius: 2, px: 3, py: 1, fontWeight: 600, boxShadow: 3 }}
           >
-            {syncing ? "Syncing..." : "Sync Knowledge Base"}
+            {syncing ? t("admin.syncing") : t("admin.sync_button")}
           </Button>
         </Box>
 
@@ -184,10 +185,10 @@ const AdminPage = ({ onBack }) => {
             >
               <CloudUploadIcon sx={{ fontSize: 60, color: "primary.main", mb: 2, opacity: 0.8 }} />
               <Typography variant="h6" fontWeight={600} gutterBottom>
-                Upload Knowledge
+                {t("admin.upload_title")}
               </Typography>
               <Typography variant="body2" color="text.secondary" align="center" sx={{ mb: 3 }}>
-                เลือกไฟล์ .json ที่ทำความสะอาดแล้วเพื่อเพิ่มข้อมูลใหม่เข้าสู่ระบบ
+                {t("admin.upload_desc")}
               </Typography>
               <input
                 accept=".json"
@@ -205,7 +206,7 @@ const AdminPage = ({ onBack }) => {
                   startIcon={uploading ? <CircularProgress size={18} /> : null}
                   sx={{ borderRadius: 2, px: 4, textTransform: "none" }}
                 >
-                  {uploading ? "Uploading..." : "Select JSON File"}
+                  {uploading ? t("admin.uploading") : t("admin.select_file")}
                 </Button>
               </label>
             </Paper>
@@ -216,7 +217,7 @@ const AdminPage = ({ onBack }) => {
             <Paper sx={{ borderRadius: 4, overflow: "hidden", height: "100%" }}>
               <Box sx={{ p: 2, bgcolor: "primary.main", color: "#fff", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <Typography variant="subtitle1" fontWeight={600}>
-                  Knowledge Files ({files.length})
+                  {t("admin.files_title")} ({files.length})
                 </Typography>
                 <IconButton size="small" color="inherit" onClick={loadFiles}>
                   <RefreshIcon fontSize="small" />
@@ -229,7 +230,7 @@ const AdminPage = ({ onBack }) => {
                   </Box>
                 ) : files.length === 0 ? (
                   <Box sx={{ p: 4, textAlign: "center" }}>
-                    <Typography color="text.disabled">ไม่พบไฟล์ในระบบ</Typography>
+                    <Typography color="text.disabled">{t("admin.no_files")}</Typography>
                   </Box>
                 ) : (
                   files.map((file, index) => (
@@ -240,7 +241,7 @@ const AdminPage = ({ onBack }) => {
                           "&:hover": { bgcolor: "action.hover" },
                         }}
                         secondaryAction={
-                          <Tooltip title="Delete file">
+                          <Tooltip title={t("admin.delete_tooltip")}>
                             <IconButton edge="end" color="error" onClick={() => handleDeleteFile(file.name)}>
                               <DeleteIcon fontSize="small" />
                             </IconButton>
