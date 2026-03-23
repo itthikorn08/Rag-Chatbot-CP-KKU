@@ -40,7 +40,26 @@ export const deleteChatSession = async (sessionId) => {
 };
 
 export const syncKnowledge = async () => {
-  const { data } = await apiClient.post("/chat/sync");
+  const { data } = await apiClient.post("/admin/sync");
+  return data;
+};
+
+export const listAdminFiles = async () => {
+  const { data } = await apiClient.get("/admin/files");
+  return data.files;
+};
+
+export const uploadAdminJson = async (formData) => {
+  const { data } = await apiClient.post("/admin/upload", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+  return data;
+};
+
+export const deleteAdminFile = async (filename) => {
+  const { data } = await apiClient.delete(`/admin/files/${filename}`);
   return data;
 };
 

@@ -41,15 +41,15 @@ import ChatBubbleOutlineRoundedIcon from "@mui/icons-material/ChatBubbleOutlineR
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
 import LanguageRoundedIcon from "@mui/icons-material/LanguageRounded";
-import SyncRoundedIcon from "@mui/icons-material/SyncRounded";
+import SyncIcon from "@mui/icons-material/SyncRounded";
 import ChatBubble from "./ChatBubble";
-import { askQuestion, getChatHistory, getChatSessions, deleteChatSession, syncKnowledge } from "../api/chatApi";
+import { askQuestion, getChatHistory, getChatSessions, deleteChatSession } from "../api/chatApi";
 import { useThemeContext } from "../theme/ThemeContext";
 import { useAuth } from "../context/AuthContext";
 
 const DRAWER_WIDTH = 280;
 
-const ChatPage = ({ onExitGuest, isGuest }) => {
+const ChatPage = ({ onExitGuest, isGuest, isAdmin, onGoAdmin }) => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -60,7 +60,7 @@ const ChatPage = ({ onExitGuest, isGuest }) => {
   );
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [sessionToDelete, setSessionToDelete] = useState(null);
-  const [syncing, setSyncing] = useState(false);
+  // const [syncing, setSyncing] = useState(false); // Moved to AdminPage
 
   const messagesEndRef = useRef(null);
   const { t, i18n } = useTranslation();
@@ -226,20 +226,7 @@ const ChatPage = ({ onExitGuest, isGuest }) => {
     }
   };
 
-  const handleSyncKnowledge = async () => {
-    if (syncing) return;
-    setSyncing(true);
-    try {
-      const result = await syncKnowledge();
-      console.log("Sync result:", result);
-      alert(t("chat.sync_success") || "ฐานข้อมูลความรู้ถูกจัดระเบียบใหม่เรียบร้อยแล้ว!");
-    } catch (err) {
-      console.error("Failed to sync knowledge:", err);
-      alert(t("chat.sync_error") || "เกิดข้อผิดพลาดในการซิงค์ข้อมูล กรุณาลองใหม่");
-    } finally {
-      setSyncing(false);
-    }
-  };
+  /* Sync logic moved to AdminPage */
 
   const displayName = user ? user.displayName : t("chat.guest_name");
 
@@ -278,26 +265,26 @@ const ChatPage = ({ onExitGuest, isGuest }) => {
               {t("chat.new_chat")}
             </Button>
 
-            {!isGuest && (
+            {isAdmin && (
               <Button
                 variant="text"
                 fullWidth
-                startIcon={syncing ? <CircularProgress size={18} /> : <SyncRoundedIcon />}
-                onClick={handleSyncKnowledge}
-                disabled={syncing}
+                startIcon={<SyncIcon />}
+                onClick={onGoAdmin}
                 sx={{
                   mb: 2,
                   py: 1,
                   borderRadius: 2,
                   textTransform: "none",
                   fontSize: "0.875rem",
-                  color: "text.secondary",
-                  border: "1px dashed",
-                  borderColor: "divider",
-                  "&:hover": { bgcolor: "action.hover", borderColor: "primary.main", color: "primary.main" },
+                  color: "primary.main",
+                  border: "1px solid",
+                  borderColor: "primary.light",
+                  bgcolor: "rgba(26, 35, 126, 0.05)",
+                  "&:hover": { bgcolor: "primary.light", color: "white" },
                 }}
               >
-                {syncing ? "Syncing..." : "Sync Knowledge Base"}
+                Go to Admin Dashboard
               </Button>
             )}
 

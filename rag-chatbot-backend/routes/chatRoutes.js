@@ -5,8 +5,6 @@ const { protect, requireAuth } = require("../middleware/authMiddleware");
 
 router.post("/ask", protect, askQuestion);
 
-router.post("/sync", requireAuth, syncKnowledge);
-
 router.get("/sessions", requireAuth, getChatSessions);
 
 router.get("/history/:sessionId", requireAuth, getChatHistory);

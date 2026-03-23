@@ -4,6 +4,7 @@ const { MongoClient } = require("mongodb");
 const { ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings } = require("@langchain/google-genai");
 const { PDFLoader } = require("@langchain/community/document_loaders/fs/pdf");
 const { TextLoader } = require("langchain/document_loaders/fs/text");
+const { JSONLoader } = require("langchain/document_loaders/fs/json");
 const { RecursiveCharacterTextSplitter } = require("langchain/text_splitter");
 const { MongoDBAtlasVectorSearch } = require("@langchain/mongodb");
 const { createRetrievalChain } = require("langchain/chains/retrieval");
@@ -32,12 +33,18 @@ const loadAndSplitDocuments = async () => {
       loader = new PDFLoader(filePath);
     } else if (file.endsWith(".txt")) {
       loader = new TextLoader(filePath);
+    } else if (file.endsWith(".json")) {
+      loader = new JSONLoader(filePath);
     } else {
       continue;
     }
 
     const docs = await loader.load();
-    allDocs = allDocs.concat(docs);
+    const docsWithMetadata = docs.map(doc => {
+      doc.metadata.source = file;
+      return doc;
+    });
+    allDocs = allDocs.concat(docsWithMetadata);
   }
 
   if (allDocs.length === 0) {
@@ -156,10 +163,10 @@ const syncKnowledgeBase = async () => {
     await client.connect();
     console.log("Syncing knowledge base: Clearing existing documents...");
     await collection.deleteMany({});
-    
+
     vectorStore = null; // Reset vectorStore to force rebuild
     await buildVectorStore();
-    
+
     const count = await collection.countDocuments();
     return { success: true, message: `Knowledge base synced successfully. Now contains ${count} chunks.` };
   } catch (err) {

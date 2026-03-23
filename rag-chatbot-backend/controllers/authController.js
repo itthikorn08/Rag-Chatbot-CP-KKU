@@ -6,7 +6,7 @@ const TOKEN_EXPIRY = "7d";
 
 const generateToken = (user) => {
   return jwt.sign(
-    { id: user._id, email: user.email, displayName: user.displayName },
+    { id: user._id, email: user.email, displayName: user.displayName, role: user.role },
     JWT_SECRET,
     { expiresIn: TOKEN_EXPIRY }
   );
@@ -38,6 +38,7 @@ const register = async (req, res) => {
         id: user._id,
         email: user.email,
         displayName: user.displayName,
+        role: user.role,
       },
     });
   } catch (error) {
@@ -72,6 +73,7 @@ const login = async (req, res) => {
         id: user._id,
         email: user.email,
         displayName: user.displayName,
+        role: user.role,
       },
     });
   } catch (error) {
@@ -90,6 +92,7 @@ const getMe = async (req, res) => {
       id: user._id,
       email: user.email,
       displayName: user.displayName,
+      role: user.role,
     });
   } catch (error) {
     return res.status(500).json({ error: "เกิดข้อผิดพลาด" });

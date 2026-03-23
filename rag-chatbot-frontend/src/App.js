@@ -5,12 +5,14 @@ import { AuthProvider, useAuth } from "./context/AuthContext";
 import { getAppTheme } from "./theme/theme";
 import ChatPage from "./components/ChatPage";
 import LoginPage from "./components/LoginPage";
+import AdminPage from "./components/AdminPage";
 import { CircularProgress, Box } from "@mui/material";
 
 const ThemedApp = () => {
   const { actualMode } = useThemeContext();
-  const { user, loading } = useAuth();
+  const { user, loading, isAdmin } = useAuth();
   const [guestMode, setGuestMode] = useState(false);
+  const [showAdmin, setShowAdmin] = useState(false);
 
   const theme = useMemo(() => getAppTheme(actualMode), [actualMode]);
 
@@ -33,11 +35,25 @@ const ThemedApp = () => {
     );
   }
 
+  if (user && isAdmin && showAdmin) {
+    return (
+      <MuiThemeProvider theme={theme}>
+        <CssBaseline />
+        <AdminPage onBack={() => setShowAdmin(false)} />
+      </MuiThemeProvider>
+    );
+  }
+
   return (
     <MuiThemeProvider theme={theme}>
       <CssBaseline />
       {user || guestMode ? (
-        <ChatPage onExitGuest={() => setGuestMode(false)} isGuest={!user && guestMode} />
+        <ChatPage 
+          onExitGuest={() => setGuestMode(false)} 
+          isGuest={!user && guestMode} 
+          isAdmin={isAdmin}
+          onGoAdmin={() => setShowAdmin(true)}
+        />
       ) : (
         <LoginPage onGuestMode={() => setGuestMode(true)} />
       )}

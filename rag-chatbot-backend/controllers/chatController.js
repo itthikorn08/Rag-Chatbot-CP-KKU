@@ -115,15 +115,4 @@ const deleteChatSession = async (req, res) => {
   }
 };
 
-const syncKnowledge = async (req, res) => {
-  try {
-    const { syncKnowledgeBase } = require("../services/ragHelper");
-    const result = await syncKnowledgeBase();
-    return res.json(result);
-  } catch (error) {
-    console.error("Error in syncKnowledge:", error.message);
-    return res.status(500).json({ error: "เกิดข้อผิดพลาดในการซิงค์ฐานข้อมูลความรู้" });
-  }
-};
-
-module.exports = { askQuestion, getChatHistory, getChatSessions, deleteChatSession, syncKnowledge };
+module.exports = { askQuestion, getChatHistory, getChatSessions, deleteChatSession };

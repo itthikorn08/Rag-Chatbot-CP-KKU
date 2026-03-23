@@ -37,4 +37,12 @@ const requireAuth = (req, res, next) => {
   }
 };
 
-module.exports = { protect, requireAuth };
+const isAdmin = (req, res, next) => {
+  if (req.user && req.user.role === "admin") {
+    next();
+  } else {
+    return res.status(403).json({ error: "ปฏิเสธการเข้าถึง: สำหรับผู้ดูแลระบบเท่านั้น" });
+  }
+};
+
+module.exports = { protect, requireAuth, isAdmin };
