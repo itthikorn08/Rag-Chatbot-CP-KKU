@@ -414,7 +414,7 @@ const ChatPage = ({ onExitGuest, isGuest, isAdmin, onGoAdmin }) => {
                       <ChatBubbleOutlineRoundedIcon fontSize="small" />
                     </ListItemIcon>
                     <ListItemText
-                      primary={session.title}
+                      primary={session.title === "New Chat" ? t("chat.new_chat") : session.title}
                       primaryTypographyProps={{
                         variant: "body2",
                         noWrap: true,

@@ -18,7 +18,11 @@ import VisibilityRoundedIcon from "@mui/icons-material/VisibilityRounded";
 import VisibilityOffRoundedIcon from "@mui/icons-material/VisibilityOffRounded";
 import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
 import LanguageRoundedIcon from "@mui/icons-material/LanguageRounded";
+import DarkModeRoundedIcon from "@mui/icons-material/DarkModeRounded";
+import LightModeRoundedIcon from "@mui/icons-material/LightModeRounded";
+import SettingsBrightnessRoundedIcon from "@mui/icons-material/SettingsBrightnessRounded";
 import { useAuth } from "../context/AuthContext";
+import { useThemeContext } from "../theme/ThemeContext";
 
 const LoginPage = ({ onGuestMode }) => {
   const [isRegister, setIsRegister] = useState(false);
@@ -31,6 +35,7 @@ const LoginPage = ({ onGuestMode }) => {
 
   const { t, i18n } = useTranslation();
   const { login, register } = useAuth();
+  const { mode, toggleTheme } = useThemeContext();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -86,8 +91,13 @@ const LoginPage = ({ onGuestMode }) => {
             position: "relative"
           }}
         >
-          {/* Language Switcher */}
-          <Box sx={{ position: "absolute", top: 16, right: 16 }}>
+          {/* Top-Right Actions (Theme and Language) */}
+          <Box sx={{ position: "absolute", top: 16, right: 16, display: "flex", alignItems: "center", gap: 0.5 }}>
+            <IconButton onClick={toggleTheme} color="primary" size="small" sx={{ p: 0.75 }}>
+              {mode === "light" && <LightModeRoundedIcon sx={{ fontSize: 20 }} />}
+              {mode === "dark" && <DarkModeRoundedIcon sx={{ fontSize: 20 }} />}
+              {mode === "system" && <SettingsBrightnessRoundedIcon sx={{ fontSize: 20 }} />}
+            </IconButton>
             <Button
               size="small"
               startIcon={<LanguageRoundedIcon sx={{ fontSize: 18 }} />}
