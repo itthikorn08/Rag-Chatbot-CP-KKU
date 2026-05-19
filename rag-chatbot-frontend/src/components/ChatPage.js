@@ -45,6 +45,7 @@ import DeleteIcon from "@mui/icons-material/DeleteRounded";
 import MoreVertIcon from "@mui/icons-material/MoreVertRounded";
 import LanguageRoundedIcon from "@mui/icons-material/LanguageRounded";
 import SyncIcon from "@mui/icons-material/SyncRounded";
+import MicRoundedIcon from "@mui/icons-material/MicRounded";
 import ChatBubble from "./ChatBubble";
 import { askQuestion, getChatHistory, getChatSessions, deleteChatSession } from "../api/chatApi";
 import { useThemeContext } from "../theme/ThemeContext";
@@ -71,6 +72,9 @@ const ChatPage = ({ onExitGuest, isGuest, isAdmin, onGoAdmin }) => {
   const { t, i18n } = useTranslation();
   const { user, logout } = useAuth();
   const { mode, toggleTheme } = useThemeContext();
+
+  const [isListening, setIsListening] = useState(false);
+  const recognitionRef = useRef(null);
 
   const loadSessions = useCallback(async () => {
     if (!user) return;
@@ -250,6 +254,72 @@ const ChatPage = ({ onExitGuest, isGuest, isAdmin, onGoAdmin }) => {
   };
 
   /* Sync logic moved to AdminPage */
+
+  // Speech Recognition logic
+  const toggleListening = () => {
+    if (isListening) {
+      if (recognitionRef.current) {
+        recognitionRef.current.stop();
+      }
+    } else {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRecognition) {
+        alert(t("chat.voice_unsupported"));
+        return;
+      }
+
+      const recognition = new SpeechRecognition();
+      recognition.continuous = false;
+      recognition.interimResults = false;
+      recognition.lang = i18n.language === "th" ? "th-TH" : "en-US";
+
+      recognition.onstart = () => {
+        setIsListening(true);
+      };
+
+      recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        setInput((prev) => prev + (prev ? " " : "") + transcript);
+      };
+
+      recognition.onerror = (event) => {
+        console.error("Speech recognition error:", event.error);
+        setIsListening(false);
+        if (event.error === "not-allowed") {
+          alert(i18n.language === "th" 
+            ? "กรุณาอนุญาตสิทธิ์การเข้าถึงไมโครโฟนบนเบราว์เซอร์ของคุณเพื่อใช้งานพิมพ์ด้วยเสียงนะคะ 😊" 
+            : "Please allow microphone access in your browser to use voice typing. 😊"
+          );
+        } else if (event.error === "network") {
+          alert(i18n.language === "th"
+            ? "การเชื่อมต่อเครือข่ายขัดข้อง ไม่สามารถใช้ระบบพิมพ์ด้วยเสียงได้ชั่วคราวค่ะ"
+            : "Network error. Speech recognition is temporarily unavailable."
+          );
+        } else if (event.error !== "no-speech" && event.error !== "aborted") {
+          alert(i18n.language === "th"
+            ? `เกิดข้อผิดพลาด: ${event.error}`
+            : `Error occurred: ${event.error}`
+          );
+        }
+      };
+
+      recognition.onend = () => {
+        setIsListening(false);
+      };
+
+      recognitionRef.current = recognition;
+      recognition.start();
+    }
+  };
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (recognitionRef.current) {
+        recognitionRef.current.stop();
+      }
+    };
+  }, []);
 
   const displayName = user ? user.displayName : t("chat.guest_name");
 
@@ -590,6 +660,34 @@ const ChatPage = ({ onExitGuest, isGuest, isAdmin, onGoAdmin }) => {
                 variant="outlined"
                 sx={{ "& .MuiOutlinedInput-root": { borderRadius: 3 } }}
               />
+              <Tooltip title={isListening ? t("chat.stop_listening") : t("chat.start_listening")}>
+                <IconButton
+                  onClick={toggleListening}
+                  disabled={loading}
+                  sx={{
+                    bgcolor: isListening ? "error.main" : "action.hover",
+                    color: isListening ? "#fff" : "text.secondary",
+                    "&:hover": {
+                      bgcolor: isListening ? "error.dark" : "action.selected",
+                    },
+                    animation: isListening ? "pulse 1.5s infinite" : "none",
+                    "@keyframes pulse": {
+                      "0%": {
+                        boxShadow: "0 0 0 0 rgba(211, 47, 47, 0.5)",
+                      },
+                      "70%": {
+                        boxShadow: "0 0 0 10px rgba(211, 47, 47, 0)",
+                      },
+                      "100%": {
+                        boxShadow: "0 0 0 0 rgba(211, 47, 47, 0)",
+                      },
+                    },
+                    transition: "all 0.3s ease",
+                  }}
+                >
+                  <MicRoundedIcon />
+                </IconButton>
+              </Tooltip>
               <IconButton onClick={handleSend} disabled={!input.trim() || loading} sx={{ bgcolor: "primary.main", color: "#fff", "&:hover": { bgcolor: "primary.dark" } }}>
                 <SendRoundedIcon />
               </IconButton>

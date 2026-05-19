@@ -1,0 +1,800 @@
+[
+    {
+        "intent": "admission_info",
+        "training_phrases": [
+            "สมัครเรียนยังไง"
+        ],
+        "keywords": [
+            "สมัคร",
+            "admission"
+        ],
+        "responses": {
+            "short_response": "สมัครผ่านเว็บไซต์ admissions.kku.ac.th",
+            "detailed_response": "สามารถสมัครผ่านระบบ TCAS ของมหาวิทยาลัยขอนแก่น โดยตรวจสอบรอบ คุณสมบัติ และกำหนดการได้ที่ https://admissions.kku.ac.th/"
+        }
+    },
+    {
+        "intent": "admission_round1",
+        "training_phrases": [
+            "รอบ1 คืออะไร"
+        ],
+        "keywords": [
+            "รอบ1",
+            "portfolio"
+        ],
+        "responses": {
+            "short_response": "รอบ Portfolio ใช้ผลงาน",
+            "detailed_response": "รอบที่ 1 (Portfolio) จะพิจารณาจากผลงาน ความสามารถ และการสัมภาษณ์ โดยไม่ใช้คะแนนสอบกลาง"
+        }
+    },
+    {
+        "intent": "admission_round2",
+        "training_phrases": [
+            "รอบ2 คืออะไร"
+        ],
+        "keywords": [
+            "รอบ2",
+            "quota"
+        ],
+        "responses": {
+            "short_response": "รอบโควตา",
+            "detailed_response": "รอบที่ 2 (Quota) ใช้เกณฑ์ตามพื้นที่หรือโครงการ พร้อมอาจมีการสอบหรือสัมภาษณ์เพิ่มเติม"
+        }
+    },
+    {
+        "intent": "apply_deadline",
+        "training_phrases": [
+            "สมัครวันไหน"
+        ],
+        "keywords": [
+            "วันสมัคร"
+        ],
+        "responses": {
+            "short_response": "ดูในเว็บ admissions",
+            "detailed_response": "กำหนดการสมัครในแต่ละรอบสามารถดูได้ที่ https://admissions.kku.ac.th/"
+        }
+    },
+    {
+        "intent": "document_required",
+        "training_phrases": [
+            "ต้องใช้เอกสารอะไร"
+        ],
+        "keywords": [
+            "เอกสาร"
+        ],
+        "responses": {
+            "short_response": "ใช้ ปพ.1 และบัตรประชาชน",
+            "detailed_response": "เอกสารที่ใช้ เช่น ปพ.1 สำเนาบัตรประชาชน ทะเบียนบ้าน และเอกสารอื่นตามประกาศ"
+        }
+    },
+    {
+        "intent": "upload_issue",
+        "training_phrases": [
+            "อัปโหลดไม่ได้"
+        ],
+        "keywords": [
+            "อัปโหลด",
+            "error"
+        ],
+        "responses": {
+            "short_response": "ติดต่อเจ้าหน้าที่",
+            "detailed_response": "หากอัปโหลดเอกสารไม่ได้ ติดต่อ 095-669-4704 หรือ admissions@kku.ac.th"
+        }
+    },
+    {
+        "intent": "interview_prepare",
+        "training_phrases": [
+            "สัมภาษณ์ต้องเตรียมอะไร"
+        ],
+        "keywords": [
+            "สัมภาษณ์"
+        ],
+        "responses": {
+            "short_response": "เตรียมบัตรประชาชน",
+            "detailed_response": "เตรียมบัตรประชาชน และ Portfolio (ถ้ามี) เพื่อแสดงผลงาน"
+        }
+    },
+    {
+        "intent": "interview_online",
+        "training_phrases": [
+            "สัมภาษณ์ออนไลน์ได้ไหม"
+        ],
+        "keywords": [
+            "ออนไลน์"
+        ],
+        "responses": {
+            "short_response": "ยื่นคำร้องได้",
+            "detailed_response": "สามารถยื่นคำร้องขอสัมภาษณ์ออนไลน์ โดยส่งเอกสารทาง Email ให้คณะพิจารณา"
+        }
+    },
+    {
+        "intent": "interview_process",
+        "training_phrases": [
+            "ขั้นตอนสัมภาษณ์"
+        ],
+        "keywords": [
+            "ขั้นตอน"
+        ],
+        "responses": {
+            "short_response": "ลงทะเบียนแล้วรอเรียก",
+            "detailed_response": "ไปลงทะเบียน แจ้งสาขา แล้วรอเรียกเข้าห้องสัมภาษณ์"
+        }
+    },
+    {
+        "intent": "course_info",
+        "training_phrases": [
+            "มีสาขาอะไรบ้าง"
+        ],
+        "keywords": [
+            "สาขา"
+        ],
+        "responses": {
+            "short_response": "ดูในเว็บ",
+            "detailed_response": "ดูรายละเอียดหลักสูตรได้ที่ https://computing.kku.ac.th/content/course/29"
+        }
+    },
+    {
+        "intent": "ai_require",
+        "training_phrases": [
+            "AI ต้องใช้ใบแพทย์ไหม"
+        ],
+        "keywords": [
+            "AI",
+            "ใบแพทย์"
+        ],
+        "responses": {
+            "short_response": "ไม่ต้องใช้",
+            "detailed_response": "สาขาปัญญาประดิษฐ์ไม่ต้องใช้ใบรับรองแพทย์"
+        }
+    },
+    {
+        "intent": "it_require",
+        "training_phrases": [
+            "IT ต้องตรวจสุขภาพไหม"
+        ],
+        "keywords": [
+            "IT",
+            "สุขภาพ"
+        ],
+        "responses": {
+            "short_response": "ไม่ต้องใช้",
+            "detailed_response": "สาขา IT ไม่ต้องส่งใบตรวจสุขภาพ"
+        }
+    },
+    {
+        "intent": "cs_colorblind",
+        "training_phrases": [
+            "ตาบอดสีเรียนได้ไหม"
+        ],
+        "keywords": [
+            "ตาบอดสี"
+        ],
+        "responses": {
+            "short_response": "CS ไม่มีผล",
+            "detailed_response": "สาขา CS ไม่มีผล แต่ GIS ต้องพิจารณา"
+        }
+    },
+    {
+        "intent": "tuition_fee",
+        "training_phrases": [
+            "ค่าเทอมเท่าไหร่"
+        ],
+        "keywords": [
+            "ค่าเทอม"
+        ],
+        "responses": {
+            "short_response": "15,000-30,000",
+            "detailed_response": "ภาคปกติประมาณ 15,000 บาท และโครงการพิเศษประมาณ 30,000 บาท"
+        }
+    },
+    {
+        "intent": "first_fee",
+        "training_phrases": [
+            "ค่าแรกเข้า"
+        ],
+        "keywords": [
+            "ค่าแรกเข้า"
+        ],
+        "responses": {
+            "short_response": "ปกติไม่มี",
+            "detailed_response": "ภาคปกติไม่มีค่าแรกเข้า ภาคพิเศษประมาณ 2,000 บาท"
+        }
+    },
+    {
+        "intent": "tcas_confirm",
+        "training_phrases": [
+            "ต้องยืนยันสิทธิ์ไหม"
+        ],
+        "keywords": [
+            "TCAS"
+        ],
+        "responses": {
+            "short_response": "ดูประกาศ",
+            "detailed_response": "ให้ติดตามประกาศการยืนยันสิทธิ์ผ่านระบบ TCAS"
+        }
+    },
+    {
+        "intent": "interview_confirm",
+        "training_phrases": [
+            "ต้องยืนยันสัมภาษณ์ไหม"
+        ],
+        "keywords": [
+            "สัมภาษณ์"
+        ],
+        "responses": {
+            "short_response": "ไม่ต้อง",
+            "detailed_response": "สามารถเข้าสัมภาษณ์ได้เลย"
+        }
+    },
+    {
+        "intent": "portfolio",
+        "training_phrases": [
+            "ต้องมี portfolio ไหม"
+        ],
+        "keywords": [
+            "portfolio"
+        ],
+        "responses": {
+            "short_response": "แนะนำให้มี",
+            "detailed_response": "แนะนำให้นำ Portfolio ไปแสดงผลงาน"
+        }
+    },
+    {
+        "intent": "exam_guideline",
+        "training_phrases": [
+            "แนวข้อสอบ"
+        ],
+        "keywords": [
+            "ข้อสอบ"
+        ],
+        "responses": {
+            "short_response": "ไม่เปิดเผย",
+            "detailed_response": "ทางคณะไม่สามารถเปิดเผยแนวข้อสอบได้"
+        }
+    },
+    {
+        "intent": "contact",
+        "training_phrases": [
+            "ติดต่อใคร"
+        ],
+        "keywords": [
+            "ติดต่อ"
+        ],
+        "responses": {
+            "short_response": "มีเบอร์ให้",
+            "detailed_response": "ติดต่อ 095-669-4704 หรือ admissions@kku.ac.th"
+        }
+    },
+    {
+        "intent": "admission_info",
+        "training_phrases": [
+            "สมัครเรียนยังไง"
+        ],
+        "keywords": [
+            "สมัคร",
+            "admission"
+        ],
+        "responses": {
+            "short_response": "สมัครผ่านเว็บไซต์ admissions.kku.ac.th",
+            "detailed_response": "สามารถสมัครผ่านระบบ TCAS ของมหาวิทยาลัยขอนแก่น โดยตรวจสอบรอบ คุณสมบัติ และกำหนดการได้ที่ https://admissions.kku.ac.th/"
+        }
+    },
+    {
+        "intent": "admission_round1",
+        "training_phrases": [
+            "รอบ1 คืออะไร"
+        ],
+        "keywords": [
+            "รอบ1",
+            "portfolio"
+        ],
+        "responses": {
+            "short_response": "รอบ Portfolio ใช้ผลงาน",
+            "detailed_response": "รอบที่ 1 (Portfolio) จะพิจารณาจากผลงาน ความสามารถ และการสัมภาษณ์ โดยไม่ใช้คะแนนสอบกลาง"
+        }
+    },
+    {
+        "intent": "admission_round2",
+        "training_phrases": [
+            "รอบ2 คืออะไร"
+        ],
+        "keywords": [
+            "รอบ2",
+            "quota"
+        ],
+        "responses": {
+            "short_response": "รอบโควตา",
+            "detailed_response": "รอบที่ 2 (Quota) ใช้เกณฑ์ตามพื้นที่หรือโครงการ พร้อมอาจมีการสอบหรือสัมภาษณ์เพิ่มเติม"
+        }
+    },
+    {
+        "intent": "apply_deadline",
+        "training_phrases": [
+            "สมัครวันไหน"
+        ],
+        "keywords": [
+            "วันสมัคร"
+        ],
+        "responses": {
+            "short_response": "ดูในเว็บ admissions",
+            "detailed_response": "กำหนดการสมัครในแต่ละรอบสามารถดูได้ที่ https://admissions.kku.ac.th/"
+        }
+    },
+    {
+        "intent": "document_required",
+        "training_phrases": [
+            "ต้องใช้เอกสารอะไร"
+        ],
+        "keywords": [
+            "เอกสาร"
+        ],
+        "responses": {
+            "short_response": "ใช้ ปพ.1 และบัตรประชาชน",
+            "detailed_response": "เอกสารที่ใช้ เช่น ปพ.1 สำเนาบัตรประชาชน ทะเบียนบ้าน และเอกสารอื่นตามประกาศ"
+        }
+    },
+    {
+        "intent": "upload_issue",
+        "training_phrases": [
+            "อัปโหลดไม่ได้"
+        ],
+        "keywords": [
+            "อัปโหลด",
+            "error"
+        ],
+        "responses": {
+            "short_response": "ติดต่อเจ้าหน้าที่",
+            "detailed_response": "หากอัปโหลดเอกสารไม่ได้ ติดต่อ 095-669-4704 หรือ admissions@kku.ac.th"
+        }
+    },
+    {
+        "intent": "interview_prepare",
+        "training_phrases": [
+            "สัมภาษณ์ต้องเตรียมอะไร"
+        ],
+        "keywords": [
+            "สัมภาษณ์"
+        ],
+        "responses": {
+            "short_response": "เตรียมบัตรประชาชน",
+            "detailed_response": "เตรียมบัตรประชาชน และ Portfolio (ถ้ามี) เพื่อแสดงผลงาน"
+        }
+    },
+    {
+        "intent": "interview_online",
+        "training_phrases": [
+            "สัมภาษณ์ออนไลน์ได้ไหม"
+        ],
+        "keywords": [
+            "ออนไลน์"
+        ],
+        "responses": {
+            "short_response": "ยื่นคำร้องได้",
+            "detailed_response": "สามารถยื่นคำร้องขอสัมภาษณ์ออนไลน์ โดยส่งเอกสารทาง Email ให้คณะพิจารณา"
+        }
+    },
+    {
+        "intent": "interview_process",
+        "training_phrases": [
+            "ขั้นตอนสัมภาษณ์"
+        ],
+        "keywords": [
+            "ขั้นตอน"
+        ],
+        "responses": {
+            "short_response": "ลงทะเบียนแล้วรอเรียก",
+            "detailed_response": "ไปลงทะเบียน แจ้งสาขา แล้วรอเรียกเข้าห้องสัมภาษณ์"
+        }
+    },
+    {
+        "intent": "course_info",
+        "training_phrases": [
+            "มีสาขาอะไรบ้าง"
+        ],
+        "keywords": [
+            "สาขา"
+        ],
+        "responses": {
+            "short_response": "ดูในเว็บ",
+            "detailed_response": "ดูรายละเอียดหลักสูตรได้ที่ https://computing.kku.ac.th/content/course/29"
+        }
+    },
+    {
+        "intent": "ai_require",
+        "training_phrases": [
+            "AI ต้องใช้ใบแพทย์ไหม"
+        ],
+        "keywords": [
+            "AI",
+            "ใบแพทย์"
+        ],
+        "responses": {
+            "short_response": "ไม่ต้องใช้",
+            "detailed_response": "สาขาปัญญาประดิษฐ์ไม่ต้องใช้ใบรับรองแพทย์"
+        }
+    },
+    {
+        "intent": "it_require",
+        "training_phrases": [
+            "IT ต้องตรวจสุขภาพไหม"
+        ],
+        "keywords": [
+            "IT",
+            "สุขภาพ"
+        ],
+        "responses": {
+            "short_response": "ไม่ต้องใช้",
+            "detailed_response": "สาขา IT ไม่ต้องส่งใบตรวจสุขภาพ"
+        }
+    },
+    {
+        "intent": "cs_colorblind",
+        "training_phrases": [
+            "ตาบอดสีเรียนได้ไหม"
+        ],
+        "keywords": [
+            "ตาบอดสี"
+        ],
+        "responses": {
+            "short_response": "CS ไม่มีผล",
+            "detailed_response": "สาขา CS ไม่มีผล แต่ GIS ต้องพิจารณา"
+        }
+    },
+    {
+        "intent": "tuition_fee",
+        "training_phrases": [
+            "ค่าเทอมเท่าไหร่"
+        ],
+        "keywords": [
+            "ค่าเทอม"
+        ],
+        "responses": {
+            "short_response": "15,000-30,000",
+            "detailed_response": "ภาคปกติประมาณ 15,000 บาท และโครงการพิเศษประมาณ 30,000 บาท"
+        }
+    },
+    {
+        "intent": "first_fee",
+        "training_phrases": [
+            "ค่าแรกเข้า"
+        ],
+        "keywords": [
+            "ค่าแรกเข้า"
+        ],
+        "responses": {
+            "short_response": "ปกติไม่มี",
+            "detailed_response": "ภาคปกติไม่มีค่าแรกเข้า ภาคพิเศษประมาณ 2,000 บาท"
+        }
+    },
+    {
+        "intent": "tcas_confirm",
+        "training_phrases": [
+            "ต้องยืนยันสิทธิ์ไหม"
+        ],
+        "keywords": [
+            "TCAS"
+        ],
+        "responses": {
+            "short_response": "ดูประกาศ",
+            "detailed_response": "ให้ติดตามประกาศการยืนยันสิทธิ์ผ่านระบบ TCAS"
+        }
+    },
+    {
+        "intent": "interview_confirm",
+        "training_phrases": [
+            "ต้องยืนยันสัมภาษณ์ไหม"
+        ],
+        "keywords": [
+            "สัมภาษณ์"
+        ],
+        "responses": {
+            "short_response": "ไม่ต้อง",
+            "detailed_response": "สามารถเข้าสัมภาษณ์ได้เลย"
+        }
+    },
+    {
+        "intent": "portfolio",
+        "training_phrases": [
+            "ต้องมี portfolio ไหม"
+        ],
+        "keywords": [
+            "portfolio"
+        ],
+        "responses": {
+            "short_response": "แนะนำให้มี",
+            "detailed_response": "แนะนำให้นำ Portfolio ไปแสดงผลงาน"
+        }
+    },
+    {
+        "intent": "exam_guideline",
+        "training_phrases": [
+            "แนวข้อสอบ"
+        ],
+        "keywords": [
+            "ข้อสอบ"
+        ],
+        "responses": {
+            "short_response": "ไม่เปิดเผย",
+            "detailed_response": "ทางคณะไม่สามารถเปิดเผยแนวข้อสอบได้"
+        }
+    },
+    {
+        "intent": "contact",
+        "training_phrases": [
+            "ติดต่อใคร"
+        ],
+        "keywords": [
+            "ติดต่อ"
+        ],
+        "responses": {
+            "short_response": "มีเบอร์ให้",
+            "detailed_response": "ติดต่อ 095-669-4704 หรือ admissions@kku.ac.th"
+        }
+    },
+    {
+        "intent": "admission_info",
+        "training_phrases": [
+            "สมัครเรียนยังไง"
+        ],
+        "keywords": [
+            "สมัคร",
+            "admission"
+        ],
+        "responses": {
+            "short_response": "สมัครผ่านเว็บไซต์ admissions.kku.ac.th",
+            "detailed_response": "สามารถสมัครผ่านระบบ TCAS ของมหาวิทยาลัยขอนแก่น โดยตรวจสอบรอบ คุณสมบัติ และกำหนดการได้ที่ https://admissions.kku.ac.th/"
+        }
+    },
+    {
+        "intent": "admission_round1",
+        "training_phrases": [
+            "รอบ1 คืออะไร"
+        ],
+        "keywords": [
+            "รอบ1",
+            "portfolio"
+        ],
+        "responses": {
+            "short_response": "รอบ Portfolio ใช้ผลงาน",
+            "detailed_response": "รอบที่ 1 (Portfolio) จะพิจารณาจากผลงาน ความสามารถ และการสัมภาษณ์ โดยไม่ใช้คะแนนสอบกลาง"
+        }
+    },
+    {
+        "intent": "admission_round2",
+        "training_phrases": [
+            "รอบ2 คืออะไร"
+        ],
+        "keywords": [
+            "รอบ2",
+            "quota"
+        ],
+        "responses": {
+            "short_response": "รอบโควตา",
+            "detailed_response": "รอบที่ 2 (Quota) ใช้เกณฑ์ตามพื้นที่หรือโครงการ พร้อมอาจมีการสอบหรือสัมภาษณ์เพิ่มเติม"
+        }
+    },
+    {
+        "intent": "apply_deadline",
+        "training_phrases": [
+            "สมัครวันไหน"
+        ],
+        "keywords": [
+            "วันสมัคร"
+        ],
+        "responses": {
+            "short_response": "ดูในเว็บ admissions",
+            "detailed_response": "กำหนดการสมัครในแต่ละรอบสามารถดูได้ที่ https://admissions.kku.ac.th/"
+        }
+    },
+    {
+        "intent": "document_required",
+        "training_phrases": [
+            "ต้องใช้เอกสารอะไร"
+        ],
+        "keywords": [
+            "เอกสาร"
+        ],
+        "responses": {
+            "short_response": "ใช้ ปพ.1 และบัตรประชาชน",
+            "detailed_response": "เอกสารที่ใช้ เช่น ปพ.1 สำเนาบัตรประชาชน ทะเบียนบ้าน และเอกสารอื่นตามประกาศ"
+        }
+    },
+    {
+        "intent": "upload_issue",
+        "training_phrases": [
+            "อัปโหลดไม่ได้"
+        ],
+        "keywords": [
+            "อัปโหลด",
+            "error"
+        ],
+        "responses": {
+            "short_response": "ติดต่อเจ้าหน้าที่",
+            "detailed_response": "หากอัปโหลดเอกสารไม่ได้ ติดต่อ 095-669-4704 หรือ admissions@kku.ac.th"
+        }
+    },
+    {
+        "intent": "interview_prepare",
+        "training_phrases": [
+            "สัมภาษณ์ต้องเตรียมอะไร"
+        ],
+        "keywords": [
+            "สัมภาษณ์"
+        ],
+        "responses": {
+            "short_response": "เตรียมบัตรประชาชน",
+            "detailed_response": "เตรียมบัตรประชาชน และ Portfolio (ถ้ามี) เพื่อแสดงผลงาน"
+        }
+    },
+    {
+        "intent": "interview_online",
+        "training_phrases": [
+            "สัมภาษณ์ออนไลน์ได้ไหม"
+        ],
+        "keywords": [
+            "ออนไลน์"
+        ],
+        "responses": {
+            "short_response": "ยื่นคำร้องได้",
+            "detailed_response": "สามารถยื่นคำร้องขอสัมภาษณ์ออนไลน์ โดยส่งเอกสารทาง Email ให้คณะพิจารณา"
+        }
+    },
+    {
+        "intent": "interview_process",
+        "training_phrases": [
+            "ขั้นตอนสัมภาษณ์"
+        ],
+        "keywords": [
+            "ขั้นตอน"
+        ],
+        "responses": {
+            "short_response": "ลงทะเบียนแล้วรอเรียก",
+            "detailed_response": "ไปลงทะเบียน แจ้งสาขา แล้วรอเรียกเข้าห้องสัมภาษณ์"
+        }
+    },
+    {
+        "intent": "course_info",
+        "training_phrases": [
+            "มีสาขาอะไรบ้าง"
+        ],
+        "keywords": [
+            "สาขา"
+        ],
+        "responses": {
+            "short_response": "ดูในเว็บ",
+            "detailed_response": "ดูรายละเอียดหลักสูตรได้ที่ https://computing.kku.ac.th/content/course/29"
+        }
+    },
+    {
+        "intent": "ai_require",
+        "training_phrases": [
+            "AI ต้องใช้ใบแพทย์ไหม"
+        ],
+        "keywords": [
+            "AI",
+            "ใบแพทย์"
+        ],
+        "responses": {
+            "short_response": "ไม่ต้องใช้",
+            "detailed_response": "สาขาปัญญาประดิษฐ์ไม่ต้องใช้ใบรับรองแพทย์"
+        }
+    },
+    {
+        "intent": "it_require",
+        "training_phrases": [
+            "IT ต้องตรวจสุขภาพไหม"
+        ],
+        "keywords": [
+            "IT",
+            "สุขภาพ"
+        ],
+        "responses": {
+            "short_response": "ไม่ต้องใช้",
+            "detailed_response": "สาขา IT ไม่ต้องส่งใบตรวจสุขภาพ"
+        }
+    },
+    {
+        "intent": "cs_colorblind",
+        "training_phrases": [
+            "ตาบอดสีเรียนได้ไหม"
+        ],
+        "keywords": [
+            "ตาบอดสี"
+        ],
+        "responses": {
+            "short_response": "CS ไม่มีผล",
+            "detailed_response": "สาขา CS ไม่มีผล แต่ GIS ต้องพิจารณา"
+        }
+    },
+    {
+        "intent": "tuition_fee",
+        "training_phrases": [
+            "ค่าเทอมเท่าไหร่"
+        ],
+        "keywords": [
+            "ค่าเทอม"
+        ],
+        "responses": {
+            "short_response": "15,000-30,000",
+            "detailed_response": "ภาคปกติประมาณ 15,000 บาท และโครงการพิเศษประมาณ 30,000 บาท"
+        }
+    },
+    {
+        "intent": "first_fee",
+        "training_phrases": [
+            "ค่าแรกเข้า"
+        ],
+        "keywords": [
+            "ค่าแรกเข้า"
+        ],
+        "responses": {
+            "short_response": "ปกติไม่มี",
+            "detailed_response": "ภาคปกติไม่มีค่าแรกเข้า ภาคพิเศษประมาณ 2,000 บาท"
+        }
+    },
+    {
+        "intent": "tcas_confirm",
+        "training_phrases": [
+            "ต้องยืนยันสิทธิ์ไหม"
+        ],
+        "keywords": [
+            "TCAS"
+        ],
+        "responses": {
+            "short_response": "ดูประกาศ",
+            "detailed_response": "ให้ติดตามประกาศการยืนยันสิทธิ์ผ่านระบบ TCAS"
+        }
+    },
+    {
+        "intent": "interview_confirm",
+        "training_phrases": [
+            "ต้องยืนยันสัมภาษณ์ไหม"
+        ],
+        "keywords": [
+            "สัมภาษณ์"
+        ],
+        "responses": {
+            "short_response": "ไม่ต้อง",
+            "detailed_response": "สามารถเข้าสัมภาษณ์ได้เลย"
+        }
+    },
+    {
+        "intent": "portfolio",
+        "training_phrases": [
+            "ต้องมี portfolio ไหม"
+        ],
+        "keywords": [
+            "portfolio"
+        ],
+        "responses": {
+            "short_response": "แนะนำให้มี",
+            "detailed_response": "แนะนำให้นำ Portfolio ไปแสดงผลงาน"
+        }
+    },
+    {
+        "intent": "exam_guideline",
+        "training_phrases": [
+            "แนวข้อสอบ"
+        ],
+        "keywords": [
+            "ข้อสอบ"
+        ],
+        "responses": {
+            "short_response": "ไม่เปิดเผย",
+            "detailed_response": "ทางคณะไม่สามารถเปิดเผยแนวข้อสอบได้"
+        }
+    },
+    {
+        "intent": "contact",
+        "training_phrases": [
+            "ติดต่อใคร"
+        ],
+        "keywords": [
+            "ติดต่อ"
+        ],
+        "responses": {
+            "short_response": "มีเบอร์ให้",
+            "detailed_response": "ติดต่อ 095-669-4704 หรือ admissions@kku.ac.th"
+        }
+    }
+]

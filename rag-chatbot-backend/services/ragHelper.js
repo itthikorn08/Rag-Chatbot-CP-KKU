@@ -15,8 +15,23 @@ const DATA_DIR = path.join(__dirname, "..", "data");
 const CHUNK_SIZE = 1000;
 const CHUNK_OVERLAP = 200;
 
-const client = new MongoClient(process.env.MONGO_URI || "");
-const collection = client.db("cp_kku_rag").collection("admisstion_data");
+let client = null;
+let collection = null;
+
+const getMongoConfig = () => {
+  if (client && collection) {
+    return { client, collection };
+  }
+
+  const mongoUri = process.env.MONGO_URI;
+  if (!mongoUri) {
+    throw new Error("MONGO_URI is not defined in environment variables. Please check your .env file.");
+  }
+
+  client = new MongoClient(mongoUri);
+  collection = client.db("cp_kku_rag").collection("admisstion_data");
+  return { client, collection };
+};
 
 let vectorStore = null;
 
@@ -49,6 +64,28 @@ const loadAndSplitDocuments = async () => {
                 pageContent: item.text,
                 metadata: { ...(item.metadata || {}), source: file, index }
               });
+            } else if (item.responses && (item.responses.detailed_response || item.responses.short_response)) {
+              const trainingPhrases = Array.isArray(item.training_phrases) ? item.training_phrases.join(", ") : "";
+              const keywords = Array.isArray(item.keywords) ? item.keywords.join(", ") : "";
+              const shortResponse = item.responses.short_response || "";
+              const detailedResponse = item.responses.detailed_response || "";
+
+              let formattedText = "";
+              if (item.intent) formattedText += `เจตนา (Intent): ${item.intent}\n`;
+              if (trainingPhrases) formattedText += `ตัวอย่างคำถาม/คำค้นหา: ${trainingPhrases}\n`;
+              if (keywords) formattedText += `คำสำคัญ: ${keywords}\n`;
+              if (shortResponse) formattedText += `คำตอบย่อ: ${shortResponse}\n`;
+              if (detailedResponse) formattedText += `คำตอบละเอียด: ${detailedResponse}`;
+
+              allDocs.push({
+                pageContent: formattedText.trim(),
+                metadata: {
+                  source: file,
+                  index,
+                  intent: item.intent || "",
+                  category: "FAQ"
+                }
+              });
             }
           });
         } else if (jsonData.text) {
@@ -77,6 +114,8 @@ const loadAndSplitDocuments = async () => {
 
 const buildVectorStore = async () => {
   if (vectorStore) return vectorStore;
+
+  const { client, collection } = getMongoConfig();
 
   try {
     await client.connect();
@@ -125,14 +164,14 @@ const getAnswer = async (question, chatHistory = []) => {
     });
 
     const prompt = ChatPromptTemplate.fromMessages([
-      ["system", `คุณคือผู้ช่วยตอบคำถามอัจฉริยะจากวิทยาลัยการคอมพิวเตอร์ มหาวิทยาลัยขอนแก่น (CP KKU)
+      ["system", `คุณคือผู้ช่วยตอบคำถามอัจฉริยะจากวิทยาลัยการคอมพิวเตอร์ มหาวิทยาลัยขอนแก่น (CP KKU) 🎓✨
  
  แนวทางการตอบคำถาม:
-- 1. **บุคลิก:** ตอบด้วยความสุภาพ เป็นทางการแต่เข้าถึงง่าย โดยให้ใช้ภาษาที่เป็นกลาง (Neutral) ไม่ระบุเพศ และ**ห้ามใช้คำลงท้าย "ครับ/ค่ะ" โดยเด็ดขาด** ให้เน้นความสุภาพผ่านการใช้ถ้อยคำที่เหมาะสมและเป็นมืออาชีพแทน
+1. **บุคลิก:** ตอบด้วยน้ำเสียงที่สุภาพ อบอุ่น เป็นมิตร และเป็นกันเองสูง (Friendly & Welcoming) มีหัวใจบริการ (Service Mind) ยินดีช่วยเหลือและแนะแนวทางอย่างกระตือรือร้น **ต้องใช้คำลงท้ายที่สุภาพเป็นผู้หญิงด้วยคำว่า "ค่ะ", "นะคะ" เท่านั้น ห้ามใช้คำลงท้ายของเพศชาย เช่น "ครับ" โดยเด็ดขาด** เพื่อทำให้บทสนทนารู้สึกผ่อนคลาย อบอุ่น และเป็นกันเองเหมือนคุยกับพี่สาวหรือที่ปรึกษาที่ใจดี
 2. **การจัดรูปแบบ:** 
    - ใช้ **ตัวหนา** เพื่อเน้นจุดสำคัญ เช่น ชื่อสาขา วันที่ หรือตัวเลข
    - ใช้ bullet points หรือลำดับเลขเมื่อต้องบอกรายการต่างๆ เพื่อให้อ่านง่าย
-   - **ห้ามใช้ Emojis โดยเด็ดขาด** ให้เน้นความสวยงามผ่านการจัดช่องไฟและตัวหนาเท่านั้น
+   - **สามารถใช้ Emojis น่ารักๆ** (เช่น 😊, ✨, 🎓, 💬, 📝, 📌) เพื่อเพิ่มความน่ารัก สดใส เป็นกันเอง และช่วยจัดระเบียบสายตาให้น่าอ่านยิ่งขึ้น (ใช้แต่พอดีและเหมาะสม)
 3. **ความถูกต้องและปีการศึกษา:** 
    - ตอบโดยใช้ข้อมูลจากบริบท (Context) ที่กำหนดให้เท่านั้น 
    - **สำคัญมาก:** ให้ระบุด้วยเสมอว่าข้อมูลที่ตอบนั้นอ้างอิงสำหรับ **"ปีการศึกษาใด"** (เช่น "อ้างอิงจากข้อมูลปีการศึกษา 2568-2569") หากใน Context มีระบุไว้
@@ -180,6 +219,7 @@ Context:
 
 const syncKnowledgeBase = async () => {
   try {
+    const { client, collection } = getMongoConfig();
     await client.connect();
     console.log("Syncing knowledge base: Clearing existing documents...");
     await collection.deleteMany({});

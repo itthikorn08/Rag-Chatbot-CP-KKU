@@ -35,7 +35,10 @@
     "new_topic": "New Topic",
     "guest_name": "Guest",
     "sync_success": "The database has been reorganized successfully!",
-    "sync_error": "An error occurred while syncing knowledge. Please try again."
+    "sync_error": "An error occurred while syncing knowledge. Please try again.",
+    "start_listening": "Voice Typing",
+    "stop_listening": "Stop Voice Typing",
+    "voice_unsupported": "Speech recognition is not supported in this browser."
   },
   "suggestions": {
     "criteria": "What are the admission criteria?",
