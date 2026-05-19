@@ -108,7 +108,7 @@ const AdminPage = ({ onBack }) => {
     setSuccess(null);
     setError(null);
     try {
-      const result = await syncKnowledge();
+      await syncKnowledge();
       setSuccess(t("admin.success_sync"));
     } catch (err) {
       setError(t("admin.error_sync"));

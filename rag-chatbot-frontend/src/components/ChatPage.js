@@ -32,7 +32,6 @@ import {
 import { v4 as uuidv4 } from "uuid";
 import SendRoundedIcon from "@mui/icons-material/SendRounded";
 import SchoolRoundedIcon from "@mui/icons-material/SchoolRounded";
-import AutoAwesomeRoundedIcon from "@mui/icons-material/AutoAwesomeRounded";
 import DarkModeRoundedIcon from "@mui/icons-material/DarkModeRounded";
 import LightModeRoundedIcon from "@mui/icons-material/LightModeRounded";
 import SettingsBrightnessRoundedIcon from "@mui/icons-material/SettingsBrightnessRounded";
@@ -223,12 +222,6 @@ const ChatPage = ({ onExitGuest, isGuest, isAdmin, onGoAdmin }) => {
   const handleSessionMenuDelete = () => {
     const sessionId = activeSessionId;
     handleSessionMenuClose();
-    setSessionToDelete(sessionId);
-    setDeleteDialogOpen(true);
-  };
-
-  const handleDeleteSession = (e, sessionId) => {
-    e.stopPropagation();
     setSessionToDelete(sessionId);
     setDeleteDialogOpen(true);
   };

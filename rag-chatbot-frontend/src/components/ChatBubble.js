@@ -79,13 +79,15 @@ const ChatBubble = ({ text, sender, timestamp }) => {
           <ReactMarkdown 
             remarkPlugins={[remarkGfm]}
             components={{
-              a: ({ node, ...props }) => (
+              a: ({ node, children, ...props }) => (
                 <a 
                   {...props} 
                   target="_blank" 
                   rel="noopener noreferrer" 
                   style={{ color: "inherit", textDecoration: "underline", fontWeight: 600 }}
-                />
+                >
+                  {children}
+                </a>
               )
             }}
           >
