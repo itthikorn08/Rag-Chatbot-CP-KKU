@@ -28,6 +28,7 @@ import {
   DialogActions,
   Menu,
   MenuItem,
+  Avatar,
 } from "@mui/material";
 import { v4 as uuidv4 } from "uuid";
 import SendRoundedIcon from "@mui/icons-material/SendRounded";
@@ -36,7 +37,6 @@ import DarkModeRoundedIcon from "@mui/icons-material/DarkModeRounded";
 import LightModeRoundedIcon from "@mui/icons-material/LightModeRounded";
 import SettingsBrightnessRoundedIcon from "@mui/icons-material/SettingsBrightnessRounded";
 import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
-import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import ChatBubbleOutlineRoundedIcon from "@mui/icons-material/ChatBubbleOutlineRounded";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
@@ -45,14 +45,16 @@ import MoreVertIcon from "@mui/icons-material/MoreVertRounded";
 import LanguageRoundedIcon from "@mui/icons-material/LanguageRounded";
 import SyncIcon from "@mui/icons-material/SyncRounded";
 import MicRoundedIcon from "@mui/icons-material/MicRounded";
+import LockRoundedIcon from "@mui/icons-material/LockRounded";
+import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
+import GridViewRoundedIcon from "@mui/icons-material/GridViewRounded";
 import ChatBubble from "./ChatBubble";
 import { askQuestion, getChatHistory, getChatSessions, deleteChatSession } from "../api/chatApi";
 import { useThemeContext } from "../theme/ThemeContext";
 import { useAuth } from "../context/AuthContext";
 
-const DRAWER_WIDTH = 280;
 
-const ChatPage = ({ onExitGuest, isGuest, isAdmin, onGoAdmin }) => {
+const ChatPage = ({ onExitGuest, isGuest, isAdmin, onGoAdmin, onGoProfile }) => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -65,12 +67,32 @@ const ChatPage = ({ onExitGuest, isGuest, isAdmin, onGoAdmin }) => {
   const [sessionToDelete, setSessionToDelete] = useState(null);
   const [sessionMenuAnchor, setSessionMenuAnchor] = useState(null);
   const [activeSessionId, setActiveSessionId] = useState(null);
+  const [profileMenuAnchor, setProfileMenuAnchor] = useState(null);
+  
+  const [sidebarExpanded, setSidebarExpanded] = useState(() => {
+    const saved = localStorage.getItem("sidebarExpanded");
+    return saved !== null ? JSON.parse(saved) : true;
+  });
+
+  useEffect(() => {
+    localStorage.setItem("sidebarExpanded", JSON.stringify(sidebarExpanded));
+  }, [sidebarExpanded]);
+
+  const handleProfileMenuOpen = (event) => {
+    event.stopPropagation();
+    setProfileMenuAnchor(event.currentTarget);
+  };
+  
+  const handleProfileMenuClose = () => {
+    setProfileMenuAnchor(null);
+  };
   // const [syncing, setSyncing] = useState(false); // Moved to AdminPage
 
   const messagesEndRef = useRef(null);
   const { t, i18n } = useTranslation();
-  const { user, logout } = useAuth();
+  const { user, logout, savedAccounts, switchAccount, prepareAddAccount, logoutAll } = useAuth();
   const { mode, toggleTheme } = useThemeContext();
+
 
   const [isListening, setIsListening] = useState(false);
   const recognitionRef = useRef(null);
@@ -316,168 +338,398 @@ const ChatPage = ({ onExitGuest, isGuest, isAdmin, onGoAdmin }) => {
 
   const displayName = user ? user.displayName : t("chat.guest_name");
 
+  const getInitials = (name) => {
+    if (!name) return "?";
+    const parts = name.trim().split(/\s+/);
+    if (parts.length > 1 && parts[0] && parts[1]) {
+      return (parts[0].charAt(0) + parts[1].charAt(0)).toUpperCase();
+    }
+    return name.trim().charAt(0).toUpperCase();
+  };
+
+
+  const renderSidebarContent = (isMini) => {
+    if (isMini) {
+      return (
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            height: "100%",
+            py: 2,
+            px: 1,
+            justifyContent: "space-between",
+            bgcolor: "#0e0e11",
+            color: "#fff",
+          }}
+        >
+          {/* Top section */}
+          <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 3, width: "100%" }}>
+            {/* School Logo */}
+            <Tooltip title={t("chat.app_title") || "CP KKU Admission Chatbot"} placement="right">
+              <IconButton
+                onClick={() => setSidebarExpanded(true)}
+                sx={{
+                  width: 44,
+                  height: 44,
+                  color: "secondary.main",
+                  "&:hover": { bgcolor: "rgba(255, 255, 255, 0.08)" },
+                }}
+              >
+                <SchoolRoundedIcon sx={{ fontSize: 26 }} />
+              </IconButton>
+            </Tooltip>
+
+            {/* New Chat circular button */}
+            <Tooltip title={t("chat.new_chat")} placement="right">
+              <IconButton
+                onClick={startNewChat}
+                sx={{
+                  width: 44,
+                  height: 44,
+                  bgcolor: "rgba(255, 255, 255, 0.05)",
+                  color: "#fff",
+                  border: "1px solid rgba(255, 255, 255, 0.1)",
+                  "&:hover": { bgcolor: "rgba(255, 255, 255, 0.12)" },
+                }}
+              >
+                <AddRoundedIcon sx={{ fontSize: 22 }} />
+              </IconButton>
+            </Tooltip>
+
+            {/* Grid/History Toggle Icon */}
+            <Tooltip title={t("chat.history")} placement="right">
+              <IconButton
+                onClick={() => setSidebarExpanded(true)}
+                sx={{
+                  width: 44,
+                  height: 44,
+                  color: "rgba(255, 255, 255, 0.7)",
+                  "&:hover": { color: "#fff", bgcolor: "rgba(255, 255, 255, 0.08)" },
+                }}
+              >
+                <GridViewRoundedIcon />
+              </IconButton>
+            </Tooltip>
+          </Box>
+
+          {/* Bottom section */}
+          <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 2.5, width: "100%" }}>
+
+            {/* User Avatar */}
+            <Tooltip title={displayName} placement="right">
+              <Box onClick={handleProfileMenuOpen} sx={{ cursor: "pointer" }}>
+                <Avatar
+                  sx={{
+                    width: 38,
+                    height: 38,
+                    bgcolor: "primary.main",
+                    color: "primary.contrastText",
+                    fontSize: "0.95rem",
+                    fontWeight: 700,
+                    boxShadow: "0 2px 8px rgba(0,0,0,0.3)",
+                    border: "2px solid rgba(255, 255, 255, 0.15)",
+                    transition: "all 0.2s",
+                    "&:hover": {
+                      transform: "scale(1.05)",
+                      borderColor: "primary.light",
+                    },
+                  }}
+                >
+                  {getInitials(displayName)}
+                </Avatar>
+              </Box>
+            </Tooltip>
+          </Box>
+        </Box>
+      );
+    }
+
+    // Expanded view
+    return (
+      <Box
+        sx={{
+          p: 2,
+          display: "flex",
+          flexDirection: "column",
+          height: "100%",
+          bgcolor: "#0e0e11",
+          color: "#fff",
+        }}
+      >
+        {/* Header containing school logo and hamburger collapse button */}
+        <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mb: 3 }}>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1.2 }}>
+            <SchoolRoundedIcon sx={{ fontSize: 28, color: "secondary.main" }} />
+            <Box>
+              <Typography variant="subtitle2" fontWeight={700} sx={{ color: "#fff", lineHeight: 1.1 }}>
+                CP KKU
+              </Typography>
+              <Typography variant="caption" sx={{ color: "rgba(255, 255, 255, 0.6)", fontSize: "0.75rem", display: "block" }}>
+                Admission Chatbot
+              </Typography>
+            </Box>
+          </Box>
+          <IconButton
+            onClick={() => setSidebarExpanded(false)}
+            sx={{
+              color: "rgba(255, 255, 255, 0.6)",
+              "&:hover": { color: "#fff", bgcolor: "rgba(255, 255, 255, 0.08)" },
+              display: { xs: "none", md: "inline-flex" }, // only show toggle on desktop
+            }}
+          >
+            <MenuRoundedIcon />
+          </IconButton>
+        </Box>
+
+        {/* New Chat Button (Pill layout) */}
+        <Button
+          variant="outlined"
+          fullWidth
+          startIcon={<AddRoundedIcon />}
+          onClick={startNewChat}
+          sx={{
+            mb: 2,
+            py: 1.2,
+            borderRadius: 6,
+            textTransform: "none",
+            fontSize: "0.95rem",
+            fontWeight: 600,
+            color: "#fff",
+            borderColor: "rgba(255, 255, 255, 0.2)",
+            bgcolor: "rgba(255, 255, 255, 0.03)",
+            "&:hover": {
+              borderColor: "#fff",
+              bgcolor: "rgba(255, 255, 255, 0.08)",
+            },
+          }}
+        >
+          {t("chat.new_chat")}
+        </Button>
+
+        {/* Admin Dashboard Go Button if Admin */}
+        {isAdmin && (
+          <Button
+            variant="text"
+            fullWidth
+            startIcon={<SyncIcon />}
+            onClick={onGoAdmin}
+            sx={{
+              mb: 2,
+              py: 1,
+              borderRadius: 6,
+              textTransform: "none",
+              fontSize: "0.875rem",
+              color: "primary.light",
+              border: "1px solid rgba(66, 133, 244, 0.3)",
+              bgcolor: "rgba(66, 133, 244, 0.08)",
+              "&:hover": { bgcolor: "primary.main", color: "white" },
+            }}
+          >
+            {t("admin.go_dashboard")}
+          </Button>
+        )}
+
+
+
+        <Typography variant="overline" color="text.secondary" sx={{ ml: 1, mb: 1, color: "rgba(255, 255, 255, 0.4)" }}>
+          {t("chat.history")}
+        </Typography>
+
+        {/* Sessions list */}
+        <List
+          sx={{
+            flex: 1,
+            overflowY: "auto",
+            px: 0,
+            "&::-webkit-scrollbar": { width: 4 },
+            "&::-webkit-scrollbar-thumb": {
+              bgcolor: "rgba(255, 255, 255, 0.1)",
+              borderRadius: 2,
+            },
+          }}
+        >
+          {sessions.map((session) => (
+            <ListItem
+              key={session._id}
+              disablePadding
+              sx={{ mb: 0.5 }}
+              secondaryAction={
+                <IconButton
+                  edge="end"
+                  size="small"
+                  onClick={(e) => handleSessionMenuOpen(e, session._id)}
+                  sx={{ color: "rgba(255, 255, 255, 0.4)", "&:hover": { color: "#fff" } }}
+                >
+                  <MoreVertIcon fontSize="small" />
+                </IconButton>
+              }
+            >
+              <ListItemButton
+                selected={currentSessionId === session._id}
+                onClick={() => switchSession(session._id)}
+                sx={{
+                  borderRadius: 3,
+                  mx: 0.5,
+                  pr: 7,
+                  color: "rgba(255, 255, 255, 0.7)",
+                  "&.Mui-selected": {
+                    bgcolor: "rgba(255, 255, 255, 0.1)",
+                    color: "#fff",
+                    "& .MuiListItemIcon-root": { color: "#fff" },
+                    "&:hover": { bgcolor: "rgba(255, 255, 255, 0.15)" },
+                  },
+                  "&:hover": {
+                    bgcolor: "rgba(255, 255, 255, 0.05)",
+                    color: "#fff",
+                    "& .MuiListItemIcon-root": { color: "#fff" },
+                  },
+                }}
+              >
+                <ListItemIcon sx={{ minWidth: 36, color: "inherit" }}>
+                  <ChatBubbleOutlineRoundedIcon fontSize="small" />
+                </ListItemIcon>
+                <ListItemText
+                  primary={session.title === "New Chat" ? t("chat.new_chat") : session.title}
+                  primaryTypographyProps={{
+                    variant: "body2",
+                    noWrap: true,
+                    fontWeight: currentSessionId === session._id ? 600 : 400,
+                  }}
+                />
+              </ListItemButton>
+            </ListItem>
+          ))}
+          {sessions.length === 0 && (
+            <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.3)", textAlign: "center", mt: 4 }}>
+              {t("chat.no_history")}
+            </Typography>
+          )}
+        </List>
+
+        <Divider sx={{ my: 2, borderColor: "rgba(255, 255, 255, 0.1)" }} />
+
+        {/* Profile and Settings card at the bottom */}
+        <Box sx={{ display: "flex", alignItems: "center", px: 0.5 }}>
+          <Tooltip title={!isGuest ? t("profile.edit_profile") || "แก้ไขโปรไฟล์" : ""}>
+            <Box
+              onClick={!isGuest && user ? handleProfileMenuOpen : undefined}
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: 1.5,
+                cursor: !isGuest ? "pointer" : "default",
+                p: 1,
+                borderRadius: 3,
+                transition: "background-color 0.2s",
+                minWidth: 0,
+                flex: 1,
+                color: "#fff",
+                "&:hover": {
+                  bgcolor: !isGuest ? "rgba(255, 255, 255, 0.08)" : "transparent",
+                },
+              }}
+            >
+              <Avatar
+                sx={{
+                  width: 38,
+                  height: 38,
+                  bgcolor: "primary.main",
+                  color: "primary.contrastText",
+                  fontSize: "0.95rem",
+                  fontWeight: 700,
+                  boxShadow: "0 2px 8px rgba(0,0,0,0.3)",
+                  border: "1px solid rgba(255, 255, 255, 0.15)",
+                }}
+              >
+                {getInitials(displayName)}
+              </Avatar>
+              <Box sx={{ minWidth: 0, flex: 1 }}>
+                <Typography
+                  variant="body2"
+                  fontWeight={600}
+                  sx={{
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                  }}
+                >
+                  {displayName}
+                </Typography>
+                <Typography
+                  variant="caption"
+                  sx={{
+                    display: "block",
+                    color: "rgba(255, 255, 255, 0.5)",
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                  }}
+                >
+                  {isGuest ? t("chat.guest_name") : user?.role === "admin" ? "Admin" : "User"}
+                </Typography>
+              </Box>
+              <Typography
+                variant="body2"
+                sx={{
+                  color: "rgba(255, 255, 255, 0.5)",
+                  ml: "auto",
+                  pr: 0.5,
+                  display: "flex",
+                  alignItems: "center",
+                  fontWeight: "bold",
+                }}
+              >
+                &gt;
+              </Typography>
+            </Box>
+          </Tooltip>
+        </Box>
+      </Box>
+    );
+  };
+
   return (
     <Box sx={{ display: "flex", height: "100vh", bgcolor: "background.default" }}>
-      {/* ─── Sidebar (Drawer) ─────────────────────────── */}
+      {/* ─── Persistent Desktop Sidebar ───────────────── */}
+      {!isGuest && (
+        <Box
+          sx={{
+            display: { xs: "none", md: "flex" },
+            width: sidebarExpanded ? 280 : 68,
+            transition: "width 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+            flexDirection: "column",
+            height: "100%",
+            bgcolor: "#0e0e11",
+            borderRight: "1px solid",
+            borderColor: "rgba(255, 255, 255, 0.1)",
+            overflow: "hidden",
+            flexShrink: 0,
+          }}
+        >
+          {renderSidebarContent(!sidebarExpanded)}
+        </Box>
+      )}
+
+      {/* ─── Mobile Drawer Sidebar ────────────────────── */}
       {!isGuest && (
         <Drawer
           variant="temporary"
           open={drawerOpen}
           onClose={() => setDrawerOpen(false)}
           sx={{
+            display: { xs: "block", md: "none" },
             "& .MuiDrawer-paper": {
-              width: DRAWER_WIDTH,
-              bgcolor: "background.paper",
+              width: 280,
+              bgcolor: "#0e0e11",
               borderRight: "1px solid",
-              borderColor: "divider",
+              borderColor: "rgba(255, 255, 255, 0.1)",
+              boxSizing: "border-box",
             },
           }}
         >
-          <Box sx={{ p: 2, display: "flex", flexDirection: "column", height: "100%" }}>
-            <Button
-              variant="outlined"
-              fullWidth
-              startIcon={<AddRoundedIcon />}
-              onClick={startNewChat}
-              sx={{
-                mb: 2,
-                py: 1.2,
-                borderRadius: 2,
-                textTransform: "none",
-                fontSize: "1rem",
-                fontWeight: 600,
-              }}
-            >
-              {t("chat.new_chat")}
-            </Button>
-
-            {isAdmin && (
-              <Button
-                variant="text"
-                fullWidth
-                startIcon={<SyncIcon />}
-                onClick={onGoAdmin}
-                sx={{
-                  mb: 2,
-                  py: 1,
-                  borderRadius: 2,
-                  textTransform: "none",
-                  fontSize: "0.875rem",
-                  color: "primary.main",
-                  border: "1px solid",
-                  borderColor: "primary.light",
-                  bgcolor: "rgba(26, 35, 126, 0.05)",
-                  "&:hover": { bgcolor: "primary.light", color: "white" },
-                }}
-              >
-                {t("admin.go_dashboard")}
-              </Button>
-            )}
-
-            <Typography variant="overline" color="text.secondary" sx={{ ml: 1, mb: 1 }}>
-              {t("chat.history")}
-            </Typography>
-
-            <List sx={{ flex: 1, overflowY: "auto", px: 0 }}>
-              {sessions.map((session) => (
-                <ListItem
-                  key={session._id}
-                  disablePadding
-                  sx={{ mb: 0.5 }}
-                  secondaryAction={
-                    <IconButton
-                      edge="end"
-                      size="small"
-                      onClick={(e) => handleSessionMenuOpen(e, session._id)}
-                      sx={{ transition: "all 0.2s" }}
-                    >
-                      <MoreVertIcon fontSize="small" />
-                    </IconButton>
-                  }
-                >
-                  <ListItemButton
-                    selected={currentSessionId === session._id}
-                    onClick={() => switchSession(session._id)}
-                    sx={{
-                      borderRadius: 2,
-                      mx: 0.5,
-                      pr: 7,
-                      "&.Mui-selected": {
-                        bgcolor: "primary.light",
-                        color: "primary.contrastText",
-                        "& .MuiListItemIcon-root": { color: "primary.contrastText" },
-                        "&:hover": { bgcolor: "primary.main" },
-                      },
-                    }}
-                  >
-                    <ListItemIcon sx={{ minWidth: 36 }}>
-                      <ChatBubbleOutlineRoundedIcon fontSize="small" />
-                    </ListItemIcon>
-                    <ListItemText
-                      primary={session.title === "New Chat" ? t("chat.new_chat") : session.title}
-                      primaryTypographyProps={{
-                        variant: "body2",
-                        noWrap: true,
-                        fontWeight: currentSessionId === session._id ? 600 : 400,
-                      }}
-                    />
-                  </ListItemButton>
-                </ListItem>
-              ))}
-              {sessions.length === 0 && (
-                <Typography variant="body2" color="text.disabled" sx={{ textAlign: "center", mt: 4 }}>
-                  {t("chat.no_history")}
-                </Typography>
-              )}
-            </List>
-
-            <Menu
-              anchorEl={sessionMenuAnchor}
-              open={Boolean(sessionMenuAnchor)}
-              onClose={handleSessionMenuClose}
-              transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-              anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-              PaperProps={{
-                sx: {
-                  mt: 0.5,
-                  borderRadius: 2,
-                  minWidth: 120,
-                  boxShadow: "0px 4px 20px rgba(0,0,0,0.12)"
-                }
-              }}
-            >
-              <MenuItem 
-                onClick={handleSessionMenuDelete}
-                sx={{ color: "error.main", gap: 1.5, py: 1 }}
-              >
-                <DeleteIcon fontSize="small" />
-                <Typography variant="body2" fontWeight={600}>
-                  {t("admin.delete_button")}
-                </Typography>
-              </MenuItem>
-            </Menu>
-
-            <Divider sx={{ my: 2 }} />
-
-            <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", px: 1 }}>
-              <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
-                <PersonRoundedIcon color="primary" />
-                <Box>
-                  <Typography variant="body2" fontWeight={600}>
-                    {displayName}
-                  </Typography>
-                  <Typography variant="caption" color="text.secondary">
-                    {t("common.logged_in")}
-                  </Typography>
-                </Box>
-              </Box>
-              <Tooltip title={isGuest ? t("chat.exit_guest") : t("chat.logout")}>
-                <IconButton onClick={handleLogout} color="error" size="small">
-                  <LogoutRoundedIcon fontSize="small" />
-                </IconButton>
-              </Tooltip>
-            </Box>
-          </Box>
+          {renderSidebarContent(false)}
         </Drawer>
       )}
 
@@ -494,11 +746,24 @@ const ChatPage = ({ onExitGuest, isGuest, isAdmin, onGoAdmin }) => {
         >
           <Toolbar sx={{ gap: 1.5, py: 1 }}>
             {!isGuest && (
-              <IconButton color="inherit" onClick={() => setDrawerOpen(true)} sx={{ mr: 0.5 }}>
+              <IconButton
+                color="inherit"
+                onClick={() => setDrawerOpen(true)}
+                sx={{
+                  mr: 0.5,
+                  display: { xs: "inline-flex", md: "none" },
+                }}
+              >
                 <MenuRoundedIcon />
               </IconButton>
             )}
-            <SchoolRoundedIcon sx={{ fontSize: 32, color: "secondary.main" }} />
+            <SchoolRoundedIcon
+              sx={{
+                fontSize: 32,
+                color: "secondary.main",
+                display: { xs: "inline-flex", md: "none" },
+              }}
+            />
             <Box sx={{ flexGrow: 1 }}>
               <Typography variant="h6" sx={{ lineHeight: 1.2, letterSpacing: 0.5 }}>
                 {t("chat.app_title")}
@@ -508,35 +773,39 @@ const ChatPage = ({ onExitGuest, isGuest, isAdmin, onGoAdmin }) => {
               </Typography>
             </Box>
             <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-              <Chip
-                icon={<PersonRoundedIcon sx={{ fontSize: 16 }} />}
-                label={displayName}
-                size="small"
-                sx={{
-                  display: { xs: "none", md: "flex" },
-                  bgcolor: "rgba(255, 255, 255, 0.15)",
-                  color: "#fff",
-                  fontWeight: 500,
-                  border: "1px solid rgba(255, 255, 255, 0.2)",
-                  "& .MuiChip-icon": { color: "#fff" },
-                }}
-              />
 
-              <IconButton onClick={toggleTheme} color="inherit">
-                {mode === "light" && <LightModeRoundedIcon />}
-                {mode === "dark" && <DarkModeRoundedIcon />}
-                {mode === "system" && <SettingsBrightnessRoundedIcon />}
-              </IconButton>
-
+              {/* Language Toggle - labeled button */}
               <Button
                 color="inherit"
-                startIcon={<LanguageRoundedIcon fontSize="small" />}
                 onClick={() => i18n.changeLanguage(i18n.language === "th" ? "en" : "th")}
-                sx={{ minWidth: 40, fontWeight: 700, borderRadius: 2, textTransform: "none" }}
+                startIcon={<LanguageRoundedIcon />}
+                sx={{
+                  textTransform: "none",
+                  borderRadius: 3,
+                  px: 1.5,
+                  py: 0.6,
+                  fontWeight: 600,
+                  fontSize: "0.85rem",
+                  border: "1px solid rgba(255,255,255,0.3)",
+                  "&:hover": { bgcolor: "rgba(255,255,255,0.1)" },
+                }}
               >
-                {i18n.language === "th" ? "EN" : "TH"}
+                {i18n.language === "th" ? "ไทย / EN" : "TH / English"}
               </Button>
 
+              {/* Guest Exit Button */}
+              {isGuest && (
+                <Button
+                  variant="outlined"
+                  size="small"
+                  color="inherit"
+                  startIcon={<LogoutRoundedIcon />}
+                  onClick={handleLogout}
+                  sx={{ textTransform: "none", borderRadius: 3, borderColor: "rgba(255,255,255,0.4)" }}
+                >
+                  {t("login.title")}
+                </Button>
+              )}
             </Box>
           </Toolbar>
         </AppBar>
@@ -726,6 +995,243 @@ const ChatPage = ({ onExitGuest, isGuest, isAdmin, onGoAdmin }) => {
           </Button>
         </DialogActions>
       </Dialog>
+
+      {/* ─── Session Context Menu ───────────────── */}
+      <Menu
+        anchorEl={sessionMenuAnchor}
+        open={Boolean(sessionMenuAnchor)}
+        onClose={handleSessionMenuClose}
+        transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+        PaperProps={{
+          sx: {
+            mt: 0.5,
+            borderRadius: 2,
+            minWidth: 120,
+            boxShadow: "0px 4px 20px rgba(0,0,0,0.12)"
+          }
+        }}
+      >
+        <MenuItem 
+          onClick={handleSessionMenuDelete}
+          sx={{ color: "error.main", gap: 1.5, py: 1 }}
+        >
+          <DeleteIcon fontSize="small" />
+          <Typography variant="body2" fontWeight={600}>
+            {t("admin.delete_button")}
+          </Typography>
+        </MenuItem>
+      </Menu>
+
+      {/* ─── User Profile Menu (Dropdown Switcher) ───────── */}
+      <Menu
+        anchorEl={profileMenuAnchor}
+        open={Boolean(profileMenuAnchor)}
+        onClose={handleProfileMenuClose}
+        transformOrigin={{ horizontal: 'left', vertical: 'bottom' }}
+        anchorOrigin={{ horizontal: 'left', vertical: 'top' }}
+        PaperProps={{
+          sx: {
+            mb: 1.5,
+            borderRadius: 4,
+            width: 320,
+            boxShadow: "0px 8px 30px rgba(0,0,0,0.15)",
+            bgcolor: "background.paper",
+            border: "1px solid",
+            borderColor: "divider",
+            p: 1
+          }
+        }}
+      >
+        <Box sx={{ position: "relative", px: 2, pt: 1, pb: 2, display: "flex", flexDirection: "column", alignItems: "center" }}>
+          {/* Close button */}
+          <IconButton 
+            size="small" 
+            onClick={handleProfileMenuClose} 
+            sx={{ position: "absolute", top: 8, right: 8, color: "text.secondary" }}
+          >
+            <CloseRoundedIcon sx={{ fontSize: 18 }} />
+          </IconButton>
+
+          {/* Active User Email */}
+          <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 500, mb: 2 }}>
+            {user?.email}
+          </Typography>
+
+          {/* Large Active Avatar with custom border */}
+          <Box sx={{ position: "relative", mb: 2 }}>
+            <Avatar
+              sx={{
+                width: 72,
+                height: 72,
+                bgcolor: "primary.main",
+                color: "primary.contrastText",
+                fontSize: "1.8rem",
+                fontWeight: 700,
+                border: "3px solid",
+                borderColor: "secondary.main",
+                boxShadow: "0 4px 12px rgba(0,0,0,0.15)"
+              }}
+            >
+              {getInitials(displayName)}
+            </Avatar>
+          </Box>
+
+          {/* Greeting */}
+          <Typography variant="h6" sx={{ fontSize: "1.1rem", fontWeight: 600, mb: 2, textAlign: "center" }}>
+            {i18n.language === "th" ? `สวัสดี คุณ ${displayName}` : `Hello, ${displayName}`}
+          </Typography>
+
+          {/* Manage Account Button */}
+          <Button
+            variant="outlined"
+            onClick={() => {
+              handleProfileMenuClose();
+              onGoProfile("details");
+            }}
+            sx={{
+              borderRadius: 5,
+              textTransform: "none",
+              fontWeight: 600,
+              px: 3,
+              py: 0.8,
+              fontSize: "0.875rem",
+              borderColor: "divider",
+              color: "text.primary",
+              "&:hover": {
+                bgcolor: "action.hover",
+                borderColor: "text.secondary"
+              }
+            }}
+          >
+            {t("profile.tab_details") || "จัดการข้อมูลส่วนตัว"}
+          </Button>
+        </Box>
+
+        {/* Other Accounts Switching & Add Account Section */}
+        {(() => {
+          const otherAccounts = savedAccounts.filter(a => a.email !== user?.email);
+          return (
+            <Box sx={{ bgcolor: "action.hover", borderRadius: 3, mx: 1, mb: 1.5, p: 0.5, border: "1px solid", borderColor: "divider" }}>
+              {otherAccounts.length > 0 && (
+                <List sx={{ p: 0 }}>
+                  {otherAccounts.map((account) => (
+                    <ListItem key={account.email} disablePadding>
+                      <ListItemButton
+                        onClick={() => {
+                          handleProfileMenuClose();
+                          switchAccount(account.token);
+                        }}
+                        sx={{ borderRadius: 2, py: 1 }}
+                      >
+                        <ListItemIcon sx={{ minWidth: 44 }}>
+                          <Avatar sx={{ width: 32, height: 32, bgcolor: "secondary.main", fontSize: "0.85rem", fontWeight: 600 }}>
+                            {getInitials(account.displayName)}
+                          </Avatar>
+                        </ListItemIcon>
+                        <ListItemText
+                          primary={account.displayName}
+                          secondary={account.email}
+                          primaryTypographyProps={{ variant: "body2", fontWeight: 600 }}
+                          secondaryTypographyProps={{ variant: "caption", noWrap: true }}
+                        />
+                        {account.role === "admin" && (
+                          <Chip label="Admin" size="small" variant="outlined" sx={{ height: 18, fontSize: "0.65rem", color: "primary.main", borderColor: "primary.light" }} />
+                        )}
+                      </ListItemButton>
+                    </ListItem>
+                  ))}
+                </List>
+              )}
+              
+              {/* Add Another Account Option */}
+              <List sx={{ p: 0 }}>
+                <ListItem disablePadding>
+                  <ListItemButton
+                    onClick={() => {
+                      handleProfileMenuClose();
+                      prepareAddAccount();
+                    }}
+                    sx={{ borderRadius: 2, py: 1 }}
+                  >
+                    <ListItemIcon sx={{ minWidth: 44, justifyContent: "center" }}>
+                      <AddRoundedIcon sx={{ color: "text.secondary" }} />
+                    </ListItemIcon>
+                    <ListItemText
+                      primary={i18n.language === "th" ? "เพิ่มบัญชีอื่น" : "Add another account"}
+                      primaryTypographyProps={{ variant: "body2", fontWeight: 500, color: "text.secondary" }}
+                    />
+                  </ListItemButton>
+                </ListItem>
+              </List>
+            </Box>
+          );
+        })()}
+
+        <Box sx={{ px: 1, pb: 1, display: "flex", flexDirection: "column", gap: 0.5 }}>
+
+          {/* Theme Mode Toggle */}
+          <MenuItem
+            onClick={toggleTheme}
+            sx={{ gap: 1.5, py: 1.2, borderRadius: 2 }}
+          >
+            {mode === "light" ? <DarkModeRoundedIcon fontSize="small" color="action" /> : mode === "dark" ? <SettingsBrightnessRoundedIcon fontSize="small" color="action" /> : <LightModeRoundedIcon fontSize="small" color="action" />}
+            <Typography variant="body2" sx={{ flex: 1 }}>
+              {mode === "light"
+                ? (i18n.language === "th" ? "เปลี่ยนเป็นโหมดมืด" : "Switch to Dark Mode")
+                : mode === "dark"
+                ? (i18n.language === "th" ? "เปลี่ยนเป็นโหมดระบบ" : "Switch to System Mode")
+                : (i18n.language === "th" ? "เปลี่ยนเป็นโหมดสว่าง" : "Switch to Light Mode")}
+            </Typography>
+            <Chip
+              label={mode === "light" ? (i18n.language === "th" ? "สว่าง" : "Light") : mode === "dark" ? (i18n.language === "th" ? "มืด" : "Dark") : (i18n.language === "th" ? "ระบบ" : "System")}
+              size="small"
+              variant="outlined"
+              sx={{ height: 20, fontSize: "0.65rem", pointerEvents: "none" }}
+            />
+          </MenuItem>
+
+          {/* Change Password link */}
+          <MenuItem 
+            onClick={() => {
+              handleProfileMenuClose();
+              onGoProfile("password");
+            }}
+            sx={{ gap: 1.5, py: 1.2, borderRadius: 2 }}
+          >
+            <LockRoundedIcon fontSize="small" color="action" />
+            <Typography variant="body2">{t("profile.tab_password") || "เปลี่ยนรหัสผ่าน"}</Typography>
+          </MenuItem>
+
+          <Divider sx={{ my: 0.5 }} />
+
+          {/* Logout of all accounts button */}
+          <MenuItem 
+            onClick={() => {
+              handleProfileMenuClose();
+              logoutAll();
+            }}
+            sx={{ 
+              color: "error.main", 
+              gap: 1.5, 
+              py: 1.2, 
+              borderRadius: 2,
+              justifyContent: "center",
+              fontWeight: 600,
+              bgcolor: "rgba(211, 47, 47, 0.04)",
+              "&:hover": {
+                bgcolor: "rgba(211, 47, 47, 0.08)",
+              }
+            }}
+          >
+            <LogoutRoundedIcon fontSize="small" color="inherit" />
+            <Typography variant="body2" fontWeight={600}>
+              {i18n.language === "th" ? "ออกจากระบบบัญชีทั้งหมด" : "Sign out of all accounts"}
+            </Typography>
+          </MenuItem>
+        </Box>
+      </Menu>
+
     </Box>
   );
 };

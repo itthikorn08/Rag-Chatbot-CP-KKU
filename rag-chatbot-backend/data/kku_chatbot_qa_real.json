@@ -1,0 +1,204 @@
+[
+  {
+    "text": "การสมัครเรียนสามารถทำได้ผ่านระบบ TCAS ของมหาวิทยาลัยขอนแก่น ผู้สมัครสามารถตรวจสอบรอบการรับสมัคร คุณสมบัติ และกำหนดการต่างๆ ได้ที่เว็บไซต์ https://admissions.kku.ac.th/",
+    "metadata": {
+      "academic_year": "TODO",
+      "round": null,
+      "admission_type": "TCAS",
+      "category": "General Info"
+    }
+  },
+  {
+    "text": "รอบที่ 1 (Portfolio) จะพิจารณาจากผลงาน ความสามารถ และการสัมภาษณ์ของผู้สมัคร โดยจะไม่มีการใช้คะแนนสอบกลางในการคัดเลือก",
+    "metadata": {
+      "academic_year": "TODO",
+      "round": 1,
+      "admission_type": "Portfolio",
+      "category": "Admission Criteria"
+    }
+  },
+  {
+    "text": "รอบที่ 2 (Quota) จะใช้เกณฑ์การพิจารณาตามพื้นที่หรือโครงการพิเศษต่างๆ ซึ่งอาจมีการสอบหรือสัมภาษณ์เพิ่มเติมตามที่กำหนด",
+    "metadata": {
+      "academic_year": "TODO",
+      "round": 2,
+      "admission_type": "Quota",
+      "category": "Admission Criteria"
+    }
+  },
+  {
+    "text": "กำหนดการรับสมัครในแต่ละรอบสามารถตรวจสอบรายละเอียดได้ที่เว็บไซต์ https://admissions.kku.ac.th/",
+    "metadata": {
+      "academic_year": "TODO",
+      "round": null,
+      "admission_type": null,
+      "category": "General Info",
+      "info_type": "Application Deadlines"
+    }
+  },
+  {
+    "text": "เอกสารที่ใช้ในการสมัครเรียน ได้แก่ ปพ.1 (ระเบียนแสดงผลการเรียน), สำเนาบัตรประชาชน, สำเนาทะเบียนบ้าน และเอกสารอื่นๆ ตามที่ประกาศกำหนด",
+    "metadata": {
+      "academic_year": "TODO",
+      "round": null,
+      "admission_type": null,
+      "category": "Document Requirements"
+    }
+  },
+  {
+    "text": "หากพบปัญหาในการอัปโหลดเอกสาร กรุณาติดต่อเจ้าหน้าที่ได้ที่เบอร์โทรศัพท์ 095-669-4704 หรือทางอีเมล admissions@kku.ac.th",
+    "metadata": {
+      "academic_year": "TODO",
+      "round": null,
+      "admission_type": null,
+      "category": "Contact Info",
+      "issue_type": "Document Upload"
+    }
+  },
+  {
+    "text": "ในการสัมภาษณ์ ผู้สมัครควรเตรียมบัตรประชาชน และ Portfolio (แฟ้มสะสมผลงาน) หากมี เพื่อใช้แสดงผลงานและความสามารถ",
+    "metadata": {
+      "academic_year": "TODO",
+      "round": null,
+      "admission_type": null,
+      "category": "Interview Process",
+      "document_required": "บัตรประชาชน, Portfolio (ถ้ามี)"
+    }
+  },
+  {
+    "text": "ผู้สมัครสามารถยื่นคำร้องขอสัมภาษณ์ออนไลน์ได้ โดยส่งเอกสารที่เกี่ยวข้องทางอีเมลเพื่อให้คณะพิจารณา",
+    "metadata": {
+      "academic_year": "TODO",
+      "round": null,
+      "admission_type": null,
+      "category": "Interview Process",
+      "interview_type": "Online"
+    }
+  },
+  {
+    "text": "ขั้นตอนการสัมภาษณ์คือ ผู้สมัครต้องไปลงทะเบียน แจ้งสาขาวิชาที่สมัคร แล้วรอเรียกเข้าห้องสัมภาษณ์ตามลำดับ",
+    "metadata": {
+      "academic_year": "TODO",
+      "round": null,
+      "admission_type": null,
+      "category": "Interview Process"
+    }
+  },
+  {
+    "text": "สามารถดูรายละเอียดหลักสูตรทั้งหมดของคณะได้ที่เว็บไซต์ https://computing.kku.ac.th/content/course/29",
+    "metadata": {
+      "academic_year": "TODO",
+      "round": null,
+      "admission_type": null,
+      "category": "Course Information"
+    }
+  },
+  {
+    "text": "สาขาวิชาปัญญาประดิษฐ์ (AI) ไม่ต้องใช้ใบรับรองแพทย์ในการสมัคร",
+    "metadata": {
+      "academic_year": "TODO",
+      "round": null,
+      "admission_type": null,
+      "category": "Admission Criteria",
+      "program": "ปัญญาประดิษฐ์ (AI)",
+      "document_required": "ใบรับรองแพทย์",
+      "requirement_status": "Not Required"
+    }
+  },
+  {
+    "text": "สาขาวิชาเทคโนโลยีสารสนเทศ (IT) ไม่ต้องส่งใบตรวจสุขภาพในการสมัคร",
+    "metadata": {
+      "academic_year": "TODO",
+      "round": null,
+      "admission_type": null,
+      "category": "Admission Criteria",
+      "program": "เทคโนโลยีสารสนเทศ (IT)",
+      "document_required": "ใบตรวจสุขภาพ",
+      "requirement_status": "Not Required"
+    }
+  },
+  {
+    "text": "สำหรับผู้สมัครที่มีภาวะตาบอดสี สาขาวิชาวิทยาการคอมพิวเตอร์ (CS) ไม่มีผลต่อการเรียน แต่สาขาวิชาภูมิสารสนเทศ (GIS) อาจต้องพิจารณาเป็นกรณีไป",
+    "metadata": {
+      "academic_year": "TODO",
+      "round": null,
+      "admission_type": null,
+      "category": "Admission Criteria",
+      "condition": "ตาบอดสี",
+      "program_impact": {
+        "CS": "ไม่มีผล",
+        "GIS": "ต้องพิจารณา"
+      }
+    }
+  },
+  {
+    "text": "ค่าเทอมสำหรับภาคปกติประมาณ 15,000 บาทต่อภาคการศึกษา และสำหรับโครงการพิเศษประมาณ 30,000 บาทต่อภาคการศึกษา",
+    "metadata": {
+      "academic_year": "TODO",
+      "round": null,
+      "admission_type": null,
+      "category": "Tuition Fees",
+      "fee_type": "ค่าเทอม"
+    }
+  },
+  {
+    "text": "ภาคปกติไม่มีค่าแรกเข้า ส่วนภาคพิเศษมีค่าแรกเข้าประมาณ 2,000 บาท",
+    "metadata": {
+      "academic_year": "TODO",
+      "round": null,
+      "admission_type": null,
+      "category": "Tuition Fees",
+      "fee_type": "ค่าแรกเข้า"
+    }
+  },
+  {
+    "text": "ผู้สมัครควรติดตามประกาศการยืนยันสิทธิ์ผ่านระบบ TCAS อย่างใกล้ชิดตามกำหนดการของมหาวิทยาลัย",
+    "metadata": {
+      "academic_year": "TODO",
+      "round": null,
+      "admission_type": "TCAS",
+      "category": "Admission Process",
+      "process_step": "ยืนยันสิทธิ์"
+    }
+  },
+  {
+    "text": "ผู้สมัครไม่จำเป็นต้องยืนยันการสัมภาษณ์ สามารถเข้าสัมภาษณ์ได้เลยตามกำหนดการที่แจ้งไว้",
+    "metadata": {
+      "academic_year": "TODO",
+      "round": null,
+      "admission_type": null,
+      "category": "Interview Process",
+      "process_step": "ยืนยันสัมภาษณ์",
+      "requirement_status": "Not Required"
+    }
+  },
+  {
+    "text": "แนะนำให้นำ Portfolio (แฟ้มสะสมผลงาน) ไปแสดงผลงานในวันสัมภาษณ์ เพื่อประกอบการพิจารณา",
+    "metadata": {
+      "academic_year": "TODO",
+      "round": null,
+      "admission_type": null,
+      "category": "Interview Process",
+      "document_recommended": "Portfolio"
+    }
+  },
+  {
+    "text": "ทางคณะไม่สามารถเปิดเผยแนวข้อสอบได้",
+    "metadata": {
+      "academic_year": "TODO",
+      "round": null,
+      "admission_type": null,
+      "category": "General Info",
+      "info_type": "Exam Guidelines"
+    }
+  },
+  {
+    "text": "หากมีข้อสงสัยหรือต้องการสอบถามข้อมูลเพิ่มเติม สามารถติดต่อได้ที่เบอร์โทรศัพท์ 095-669-4704 หรือทางอีเมล admissions@kku.ac.th",
+    "metadata": {
+      "academic_year": "TODO",
+      "round": null,
+      "admission_type": null,
+      "category": "Contact Info"
+    }
+  }
+]

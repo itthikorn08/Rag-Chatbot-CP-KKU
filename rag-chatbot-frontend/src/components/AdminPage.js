@@ -20,6 +20,11 @@ import {
   Grid,
   Menu,
   MenuItem,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
 } from "@mui/material";
 import {
   CloudUploadRounded as CloudUploadIcon,
@@ -31,7 +36,7 @@ import {
   LanguageRounded as LanguageIcon,
   MoreVertRounded as MoreVertIcon,
 } from "@mui/icons-material";
-import { listAdminFiles, uploadAdminJson, deleteAdminFile, syncKnowledge } from "../api/chatApi";
+import { listAdminFiles, uploadAdminJson, deleteAdminFile, syncKnowledge, convertAdminPdf, saveAdminJson } from "../api/chatApi";
 import { useTranslation } from "react-i18next";
 
 const AdminPage = ({ onBack }) => {
@@ -44,6 +49,12 @@ const AdminPage = ({ onBack }) => {
   const [success, setSuccess] = useState(null);
   const [menuAnchor, setMenuAnchor] = useState(null);
   const [activeFile, setActiveFile] = useState(null);
+
+  // PDF Converter States
+  const [isConverting, setIsConverting] = useState(false);
+  const [showConverter, setShowConverter] = useState(false);
+  const [jsonString, setJsonString] = useState("");
+  const [outputFilename, setOutputFilename] = useState("");
 
   const loadFiles = useCallback(async () => {
     setLoading(true);
@@ -66,21 +77,83 @@ const AdminPage = ({ onBack }) => {
     const file = event.target.files[0];
     if (!file) return;
 
-    if (!file.name.endsWith(".json")) {
+    const convertibleExtensions = [".pdf", ".txt", ".md", ".docx", ".xlsx", ".xls", ".csv"];
+    const fileExtension = file.name.substring(file.name.lastIndexOf(".")).toLowerCase();
+    const isPdf = convertibleExtensions.includes(fileExtension);
+    const isJson = file.name.toLowerCase().endsWith(".json");
+
+    if (!isJson && !isPdf) {
       setError(t("admin.error_invalid_type"));
       return;
     }
 
-    setUploading(true);
     setSuccess(null);
     setError(null);
 
     const formData = new FormData();
     formData.append("file", file);
 
+    if (isJson) {
+      setUploading(true);
+      try {
+        await uploadAdminJson(formData);
+        setSuccess(t("admin.success_upload"));
+        loadFiles();
+        handleSync();
+      } catch (err) {
+        setError(t("admin.error_upload"));
+      } finally {
+        setUploading(false);
+      }
+    } else {
+      setIsConverting(true);
+      setShowConverter(true);
+      
+      const baseName = file.name.substring(0, file.name.lastIndexOf("."));
+      const cleanName = baseName.replace(/[^a-zA-Z0-9_\u0e00-\u0e7f-]/g, "_").toLowerCase() + ".json";
+      setOutputFilename(cleanName);
+      setJsonString("");
+      
+      try {
+        const res = await convertAdminPdf(formData);
+        setJsonString(JSON.stringify(res.data, null, 2));
+        setSuccess(t("admin.success_convert"));
+      } catch (err) {
+        setError(t("admin.error_convert"));
+        setShowConverter(false);
+        setIsConverting(false);
+      } finally {
+        setIsConverting(false);
+      }
+    }
+  };
+
+  const handleSaveConverted = async () => {
+    if (!outputFilename.toLowerCase().endsWith(".json")) {
+      setError("ชื่อไฟล์ต้องลงท้ายด้วย .json เท่านั้น");
+      return;
+    }
+
+    let parsedContent;
     try {
-      await uploadAdminJson(formData);
-      setSuccess(t("admin.success_upload"));
+      parsedContent = JSON.parse(jsonString);
+      if (!Array.isArray(parsedContent)) {
+        throw new Error("ข้อมูลต้องอยู่ในรูปแบบ Array [ ... ]");
+      }
+    } catch (err) {
+      setError("รูปแบบ JSON ไม่ถูกต้อง: " + err.message);
+      return;
+    }
+
+    setUploading(true);
+    setError(null);
+    setSuccess(null);
+
+    try {
+      await saveAdminJson(outputFilename, parsedContent);
+      setSuccess(t("admin.success_save_json"));
+      setShowConverter(false);
+      setJsonString("");
       loadFiles();
       handleSync();
     } catch (err) {
@@ -88,6 +161,13 @@ const AdminPage = ({ onBack }) => {
     } finally {
       setUploading(false);
     }
+  };
+
+  const handleCancelConverter = () => {
+    setShowConverter(false);
+    setJsonString("");
+    setError(null);
+    setSuccess(null);
   };
 
   const handleDeleteFile = async (filename) => {
@@ -247,25 +327,25 @@ const AdminPage = ({ onBack }) => {
                 {t("admin.upload_title")}
               </Typography>
               <Typography variant="body2" color="text.secondary" align="center" sx={{ mb: 3 }}>
-                {t("admin.upload_desc")}
+                {t("admin.upload_desc_all")}
               </Typography>
               <input
-                accept=".json"
+                accept=".json,.pdf,.txt,.md,.docx,.xlsx,.xls,.csv"
                 style={{ display: "none" }}
                 id="upload-button"
                 type="file"
                 onChange={handleFileUpload}
-                disabled={uploading}
+                disabled={uploading || isConverting}
               />
               <label htmlFor="upload-button">
                 <Button
                   variant="outlined"
                   component="span"
-                  disabled={uploading}
+                  disabled={uploading || isConverting}
                   startIcon={uploading ? <CircularProgress size={18} /> : null}
                   sx={{ borderRadius: 2, px: 4, textTransform: "none" }}
                 >
-                  {uploading ? t("admin.uploading") : t("admin.select_file")}
+                  {uploading ? t("admin.uploading") : t("admin.select_file_all")}
                 </Button>
               </label>
             </Paper>
@@ -350,6 +430,92 @@ const AdminPage = ({ onBack }) => {
           </Grid>
         </Grid>
       </Container>
+
+      {/* ─── PDF to JSON Converter Dialog ────────────────── */}
+      <Dialog 
+        open={showConverter} 
+        onClose={isConverting ? undefined : handleCancelConverter}
+        maxWidth="md"
+        fullWidth
+        PaperProps={{
+          sx: {
+            borderRadius: 4,
+            p: 1
+          }
+        }}
+      >
+        <DialogTitle sx={{ pb: 1 }}>
+          <Typography variant="h5" fontWeight={700} color="primary">
+            {t("admin.converter_title")}
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            {t("admin.converter_subtitle")}
+          </Typography>
+        </DialogTitle>
+
+        <DialogContent dividers>
+          {isConverting ? (
+            <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", py: 8, gap: 2 }}>
+              <CircularProgress size={50} thickness={4} />
+              <Typography variant="body1" fontWeight={600} color="text.secondary">
+                {t("admin.converting_pdf")}
+              </Typography>
+            </Box>
+          ) : (
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 2, pt: 1 }}>
+              <TextField
+                label={t("admin.output_filename")}
+                variant="outlined"
+                fullWidth
+                value={outputFilename}
+                onChange={(e) => setOutputFilename(e.target.value)}
+                size="small"
+                required
+              />
+              <Typography variant="caption" color="text.secondary" sx={{ mt: 1, fontWeight: 600 }}>
+                JSON Content Preview & Edit:
+              </Typography>
+              <TextField
+                fullWidth
+                multiline
+                rows={15}
+                value={jsonString}
+                onChange={(e) => setJsonString(e.target.value)}
+                variant="outlined"
+                placeholder="[ ... ]"
+                sx={{
+                  fontFamily: "monospace",
+                  "& .MuiInputBase-input": {
+                    fontFamily: "Courier New, monospace",
+                    fontSize: "0.85rem",
+                  }
+                }}
+              />
+            </Box>
+          )}
+        </DialogContent>
+
+        <DialogActions sx={{ px: 3, py: 2, gap: 1 }}>
+          <Button 
+            onClick={handleCancelConverter} 
+            color="inherit" 
+            disabled={uploading || isConverting}
+            sx={{ borderRadius: 2, px: 3 }}
+          >
+            {t("admin.cancel")}
+          </Button>
+          <Button 
+            onClick={handleSaveConverted} 
+            variant="contained" 
+            color="primary"
+            disabled={uploading || isConverting || !jsonString || !outputFilename}
+            startIcon={uploading ? <CircularProgress size={18} color="inherit" /> : null}
+            sx={{ borderRadius: 2, px: 3 }}
+          >
+            {t("admin.save_and_sync")}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };

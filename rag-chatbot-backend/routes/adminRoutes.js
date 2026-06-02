@@ -4,7 +4,7 @@ const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
 const { requireAuth, isAdmin } = require("../middleware/authMiddleware");
-const { uploadJson, syncKnowledge, listFiles, deleteFile } = require("../controllers/adminController");
+const { uploadJson, syncKnowledge, listFiles, deleteFile, convertPdf, saveJson } = require("../controllers/adminController");
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -26,6 +26,8 @@ router.use(requireAuth, isAdmin);
 
 router.get("/files", listFiles);
 router.post("/upload", upload.single("file"), uploadJson);
+router.post("/convert-pdf", upload.single("file"), convertPdf);
+router.post("/save-json", saveJson);
 router.post("/sync", syncKnowledge);
 router.delete("/files/:filename", deleteFile);
 

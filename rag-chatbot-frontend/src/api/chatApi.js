@@ -58,6 +58,20 @@ export const uploadAdminJson = async (formData) => {
   return data;
 };
 
+export const convertAdminPdf = async (formData) => {
+  const { data } = await apiClient.post("/admin/convert-pdf", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+  return data;
+};
+
+export const saveAdminJson = async (filename, content) => {
+  const { data } = await apiClient.post("/admin/save-json", { filename, content });
+  return data;
+};
+
 export const deleteAdminFile = async (filename) => {
   const { data } = await apiClient.delete(`/admin/files/${filename}`);
   return data;

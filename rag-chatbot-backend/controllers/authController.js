@@ -14,7 +14,7 @@ const generateToken = (user) => {
 
 const register = async (req, res) => {
   try {
-    const { email, password, displayName } = req.body;
+    const { email, password, displayName, firstName, lastName, dateOfBirth, gender } = req.body;
 
     if (!email || !password || !displayName) {
       return res.status(400).json({ error: "กรุณากรอกข้อมูลให้ครบถ้วน (email, password, displayName)" });
@@ -29,7 +29,15 @@ const register = async (req, res) => {
       return res.status(409).json({ error: "อีเมลนี้ถูกใช้งานแล้ว" });
     }
 
-    const user = await User.create({ email, password, displayName });
+    const user = await User.create({
+      email,
+      password,
+      displayName,
+      firstName: firstName || undefined,
+      lastName: lastName || undefined,
+      dateOfBirth: dateOfBirth || undefined,
+      gender: gender || undefined,
+    });
     const token = generateToken(user);
 
     return res.status(201).json({
@@ -38,6 +46,10 @@ const register = async (req, res) => {
         id: user._id,
         email: user.email,
         displayName: user.displayName,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        dateOfBirth: user.dateOfBirth,
+        gender: user.gender,
         role: user.role,
       },
     });
@@ -73,6 +85,10 @@ const login = async (req, res) => {
         id: user._id,
         email: user.email,
         displayName: user.displayName,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        dateOfBirth: user.dateOfBirth,
+        gender: user.gender,
         role: user.role,
       },
     });
@@ -92,6 +108,10 @@ const getMe = async (req, res) => {
       id: user._id,
       email: user.email,
       displayName: user.displayName,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      dateOfBirth: user.dateOfBirth,
+      gender: user.gender,
       role: user.role,
     });
   } catch (error) {
@@ -99,4 +119,63 @@ const getMe = async (req, res) => {
   }
 };
 
-module.exports = { register, login, getMe };
+const updateProfile = async (req, res) => {
+  try {
+    const { displayName, password, firstName, lastName, dateOfBirth, gender } = req.body;
+    const user = await User.findById(req.user.id);
+
+    if (!user) {
+      return res.status(404).json({ error: "ไม่พบผู้ใช้" });
+    }
+
+    if (displayName) {
+      user.displayName = displayName.trim();
+    }
+
+    if (password) {
+      if (password.length < 6) {
+        return res.status(400).json({ error: "รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร" });
+      }
+      user.password = password;
+    }
+
+    if (firstName !== undefined) {
+      user.firstName = firstName.trim();
+    }
+
+    if (lastName !== undefined) {
+      user.lastName = lastName.trim();
+    }
+
+    if (dateOfBirth !== undefined) {
+      user.dateOfBirth = dateOfBirth ? new Date(dateOfBirth) : null;
+    }
+
+    if (gender !== undefined) {
+      user.gender = gender;
+    }
+
+    await user.save();
+    const token = generateToken(user);
+
+    return res.json({
+      message: "อัปเดตโปรไฟล์เรียบร้อยแล้ว",
+      token,
+      user: {
+        id: user._id,
+        email: user.email,
+        displayName: user.displayName,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        dateOfBirth: user.dateOfBirth,
+        gender: user.gender,
+        role: user.role,
+      },
+    });
+  } catch (error) {
+    console.error("Update profile error:", error.message);
+    return res.status(500).json({ error: "เกิดข้อผิดพลาดในการอัปเดตโปรไฟล์" });
+  }
+};
+
+module.exports = { register, login, getMe, updateProfile };
