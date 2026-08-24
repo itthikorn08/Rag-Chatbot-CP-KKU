@@ -49,7 +49,7 @@ import LockRoundedIcon from "@mui/icons-material/LockRounded";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import GridViewRoundedIcon from "@mui/icons-material/GridViewRounded";
 import ChatBubble from "./ChatBubble";
-import { askQuestion, getChatHistory, getChatSessions, deleteChatSession } from "../api/chatApi";
+import { askQuestion, getChatHistory, getChatSessions, deleteChatSession, submitFeedback } from "../api/chatApi";
 import { useThemeContext } from "../theme/ThemeContext";
 import { useAuth } from "../context/AuthContext";
 
@@ -57,6 +57,7 @@ import { useAuth } from "../context/AuthContext";
 const ChatPage = ({ onExitGuest, isGuest, isAdmin, onGoAdmin, onGoProfile }) => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
+  const [feedbackMap, setFeedbackMap] = useState({}); // { [msgIndex]: "up" | "down" }
   const [loading, setLoading] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [sessions, setSessions] = useState([]);
@@ -889,7 +890,26 @@ const ChatPage = ({ onExitGuest, isGuest, isAdmin, onGoAdmin, onGoProfile }) => 
             {messages.map((msg, idx) => (
               <Fade in key={idx} timeout={300}>
                 <Box>
-                  <ChatBubble text={msg.text} sender={msg.sender} timestamp={msg.timestamp} />
+                  <ChatBubble
+                    text={msg.text}
+                    sender={msg.sender}
+                    timestamp={msg.timestamp}
+                    feedbackState={feedbackMap[idx] || null}
+                    onFeedback={msg.sender === "bot" ? (vote, comment) => {
+                      setFeedbackMap((prev) => ({ ...prev, [idx]: vote }));
+                      // Find the user question (previous message)
+                      const userQuestion = idx > 0 && messages[idx - 1]?.sender === "user"
+                        ? messages[idx - 1].text
+                        : "";
+                      submitFeedback({
+                        sessionId: currentSessionId,
+                        question: userQuestion,
+                        answer: msg.text,
+                        vote,
+                        comment: comment || "",
+                      }).catch((err) => console.error("Feedback error:", err));
+                    } : undefined}
+                  />
                 </Box>
               </Fade>
             ))}

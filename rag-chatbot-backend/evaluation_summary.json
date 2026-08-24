@@ -1,0 +1,79 @@
+{
+  "run_at": "2026-08-24T16:24:52.369Z",
+  "total_questions": 100,
+  "answered": 95,
+  "errors": 0,
+  "skipped": 1,
+  "answer_rate_pct": 95,
+  "avg_keyword_score": 0.4223,
+  "avg_latency_seconds": 6.268,
+  "total_elapsed_seconds": 745.2,
+  "delay_between_requests_ms": 1200,
+  "model": "gemini-3.5-flash",
+  "category_stats": [
+    {
+      "category": "1. ข้อมูลทั่วไปและหลักสูตรวิทยาลัยการคอมพิวเตอร์",
+      "total": 15,
+      "answered": 15,
+      "answer_rate_pct": 100,
+      "avg_keyword_score": 0.3754,
+      "avg_latency_s": 6.841
+    },
+    {
+      "category": "2. โครงการช้างเผือก (ปี 2568 & 2569)",
+      "total": 19,
+      "answered": 18,
+      "answer_rate_pct": 94.7,
+      "avg_keyword_score": 0.4129,
+      "avg_latency_s": 6.46
+    },
+    {
+      "category": "2. โครงการช้างเผือก ปีการศึกษา 2569 มีวัตถุประสงค์เพื่ออะไร?",
+      "total": 1,
+      "answered": 0,
+      "answer_rate_pct": 0,
+      "avg_keyword_score": 0,
+      "avg_latency_s": 0
+    },
+    {
+      "category": "3. โครงการทุนผู้มีความสามารถดีเด่นด้านคอมพิวเตอร์และเทคโนโลยีสารสนเทศ (ปี 2568 & 2569)",
+      "total": 20,
+      "answered": 20,
+      "answer_rate_pct": 100,
+      "avg_keyword_score": 0.356,
+      "avg_latency_s": 6.807
+    },
+    {
+      "category": "4. โครงการผู้มีศักยภาพด้านคอมพิวเตอร์ (ปี 2568 & 2569)",
+      "total": 15,
+      "answered": 15,
+      "answer_rate_pct": 100,
+      "avg_keyword_score": 0.4202,
+      "avg_latency_s": 6.461
+    },
+    {
+      "category": "5. การรับสมัครรอบ Quota (รอบที่ 2 ปี 2569)",
+      "total": 10,
+      "answered": 9,
+      "answer_rate_pct": 90,
+      "avg_keyword_score": 0.3292,
+      "avg_latency_s": 5.47
+    },
+    {
+      "category": "6. สถิติการคัดเลือกและคะแนนรอบ Admission (รอบที่ 3 ปี 2569)",
+      "total": 10,
+      "answered": 9,
+      "answer_rate_pct": 90,
+      "avg_keyword_score": 0.7773,
+      "avg_latency_s": 4.788
+    },
+    {
+      "category": "7. คำถามทั่วไป เอกสาร กำหนดการ และติดต่อสอบถาม",
+      "total": 10,
+      "answered": 9,
+      "answer_rate_pct": 90,
+      "avg_keyword_score": 0.4268,
+      "avg_latency_s": 6.583
+    }
+  ]
+}

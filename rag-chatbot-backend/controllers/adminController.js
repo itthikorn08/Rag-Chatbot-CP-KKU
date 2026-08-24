@@ -82,7 +82,7 @@ const convertPdf = async (req, res) => {
     }
 
     const ext = path.extname(req.file.originalname).toLowerCase();
-    const allowedExts = [".pdf", ".txt", ".md", ".docx", ".xlsx", ".xls", ".csv"];
+    const allowedExts = [".pdf", ".txt", ".md", ".docx", ".xlsx", ".xls", ".csv", ".json"];
     if (!allowedExts.includes(ext)) {
       fs.unlinkSync(req.file.path);
       return res.status(400).json({ error: `รองรับเฉพาะไฟล์ที่ลงท้ายด้วย ${allowedExts.join(", ")} เท่านั้น` });
@@ -113,7 +113,7 @@ const convertPdf = async (req, res) => {
       const worksheet = workbook.Sheets[firstSheetName];
       rawText = XLSX.utils.sheet_to_csv(worksheet);
     } else {
-      // .txt, .md
+      // .txt, .md, .json
       rawText = fs.readFileSync(req.file.path, "utf-8");
     }
 
@@ -122,7 +122,7 @@ const convertPdf = async (req, res) => {
       return res.status(400).json({ error: "ไม่พบข้อความในไฟล์ที่อัปโหลด" });
     }
 
-    console.log(`Extracted ${rawText.length} characters. Converting to JSON using AI...`);
+    console.log(`Extracted ${rawText.length} characters. Converting to standard RAG JSON using AI...`);
 
     const apiKey = process.env.GOOGLE_API_KEY?.trim();
     if (!apiKey) {
@@ -131,13 +131,13 @@ const convertPdf = async (req, res) => {
 
     const llm = new ChatGoogleGenerativeAI({
       apiKey: apiKey,
-      model: "models/gemini-2.5-flash",
+      model: process.env.GEMINI_MODEL || "gemini-3.5-flash",
       temperature: 0.1,
     });
 
     const cleanRawText = rawText.substring(0, 100000); // safety slice
     const prompt = `You are an expert academic data extraction assistant for the College of Computing, Khon Kaen University (CP KKU).
-Your task is to analyze the following raw text extracted from an admission regulations/criteria document, and convert it into a structured JSON array of objects for a RAG chatbot.
+Your task is to analyze the following raw text or unstructured JSON data extracted from an admission regulations/criteria document, and convert it into a structured JSON array of objects for a RAG chatbot.
 
 Rules:
 1. The output MUST be a valid JSON array of objects. Do not write any markdown code formatting wrapper or other text outside the JSON array.

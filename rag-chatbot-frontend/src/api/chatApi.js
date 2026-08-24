@@ -77,4 +77,26 @@ export const deleteAdminFile = async (filename) => {
   return data;
 };
 
+// ─── Feedback ────────────────────────────────────────────────
+
+export const submitFeedback = async ({ sessionId, question, answer, vote, comment }) => {
+  const { data } = await apiClient.post("/feedback", { sessionId, question, answer, vote, comment });
+  return data;
+};
+
+export const getFeedbacks = async (params = {}) => {
+  const { data } = await apiClient.get("/feedback", { params });
+  return data;
+};
+
+export const getFeedbackStats = async () => {
+  const { data } = await apiClient.get("/feedback/stats");
+  return data;
+};
+
+export const deleteFeedbackById = async (id) => {
+  const { data } = await apiClient.delete(`/feedback/${id}`);
+  return data;
+};
+
 export default apiClient;
