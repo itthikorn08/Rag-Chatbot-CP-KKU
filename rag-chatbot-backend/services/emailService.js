@@ -1,5 +1,6 @@
 const nodemailer = require("nodemailer");
 const dns = require("dns");
+const https = require("https");
 
 // Force IPv4 first because cloud containers often do not have IPv6 routing
 if (dns.setDefaultResultOrder) {
@@ -9,7 +10,7 @@ if (dns.setDefaultResultOrder) {
 const buildTransportConfig = () => {
   const host = process.env.SMTP_HOST || "smtp.gmail.com";
   const port = parseInt(process.env.SMTP_PORT, 10) || 465;
-  const secure = process.env.SMTP_SECURE === "false" ? false : (port === 465);
+  const secure = process.env.SMTP_SECURE !== "false" ? false : (port === 465);
 
   return {
     host,
@@ -19,7 +20,6 @@ const buildTransportConfig = () => {
       user: process.env.SMTP_EMAIL,
       pass: process.env.SMTP_PASSWORD,
     },
-    // Force IPv4 connection to prevent ENETUNREACH
     family: 4,
     connectionTimeout: 10000,
     greetingTimeout: 10000,
@@ -30,11 +30,8 @@ const buildTransportConfig = () => {
 const transporter = nodemailer.createTransport(buildTransportConfig());
 
 const sendOtpEmail = async (toEmail, otp) => {
-  const mailOptions = {
-    from: `"CP KKU Chatbot" <${process.env.SMTP_EMAIL}>`,
-    to: toEmail,
-    subject: "รหัส OTP สำหรับรีเซ็ตรหัสผ่าน - CP KKU Chatbot",
-    html: `
+  const subject = "รหัส OTP สำหรับรีเซ็ตรหัสผ่าน - CP KKU Chatbot";
+  const htmlContent = `
       <!DOCTYPE html>
       <html>
       <head>
@@ -46,7 +43,6 @@ const sendOtpEmail = async (toEmail, otp) => {
           <tr>
             <td align="center">
               <table width="100%" cellpadding="0" cellspacing="0" style="max-width:480px; background-color:#ffffff; border-radius:16px; box-shadow:0 4px 24px rgba(0,0,0,0.08); overflow:hidden;">
-                <!-- Header -->
                 <tr>
                   <td style="background:linear-gradient(135deg,#0d1642 0%,#1a237e 40%,#283593 100%); padding:32px 24px; text-align:center;">
                     <div style="width:56px; height:56px; background:rgba(255,255,255,0.15); border-radius:50%; display:inline-flex; align-items:center; justify-content:center; margin-bottom:12px;">
@@ -56,13 +52,11 @@ const sendOtpEmail = async (toEmail, otp) => {
                     <p style="color:rgba(255,255,255,0.7); margin:4px 0 0; font-size:13px;">Password Reset Request</p>
                   </td>
                 </tr>
-                <!-- Content -->
                 <tr>
                   <td style="padding:32px 24px;">
                     <p style="color:#333; font-size:15px; margin:0 0 8px; line-height:1.5;">สวัสดีค่ะ,</p>
                     <p style="color:#555; font-size:14px; margin:0 0 24px; line-height:1.6;">เราได้รับคำขอรีเซ็ตรหัสผ่านของคุณ กรุณาใช้รหัส OTP ด้านล่างเพื่อยืนยันตัวตน:</p>
                     
-                    <!-- OTP Box -->
                     <div style="background:linear-gradient(135deg,#f8f9ff,#eef0ff); border:2px solid #c5cae9; border-radius:12px; padding:24px; text-align:center; margin-bottom:24px;">
                       <p style="color:#666; font-size:12px; text-transform:uppercase; letter-spacing:2px; margin:0 0 8px; font-weight:600;">รหัส OTP ของคุณ</p>
                       <div style="font-size:36px; font-weight:800; color:#1a237e; letter-spacing:8px; font-family:'Courier New',monospace;">${otp}</div>
@@ -76,7 +70,6 @@ const sendOtpEmail = async (toEmail, otp) => {
                     </div>
                   </td>
                 </tr>
-                <!-- Footer -->
                 <tr>
                   <td style="background:#f8f9fa; padding:20px 24px; border-top:1px solid #eee; text-align:center;">
                     <p style="color:#999; font-size:12px; margin:0;">© ${new Date().getFullYear()} CP KKU Admission Chatbot</p>
@@ -89,7 +82,58 @@ const sendOtpEmail = async (toEmail, otp) => {
         </table>
       </body>
       </html>
-    `,
+  `;
+
+  // Use Resend if API key is provided
+  if (process.env.RESEND_API_KEY) {
+    return new Promise((resolve, reject) => {
+      // By default, free tier uses onboarding@resend.dev and can only send to your own registered email.
+      // If you added a domain in Resend, you can change this to your domain (e.g., info@yourdomain.com)
+      const fromEmail = process.env.RESEND_FROM_EMAIL || "onboarding@resend.dev";
+      
+      const payload = JSON.stringify({
+        from: \`"CP KKU Chatbot" <\${fromEmail}>\`,
+        to: [toEmail],
+        subject: subject,
+        html: htmlContent
+      });
+
+      const options = {
+        hostname: "api.resend.com",
+        port: 443,
+        path: "/emails",
+        method: "POST",
+        headers: {
+          "Authorization": \`Bearer \${process.env.RESEND_API_KEY}\`,
+          "Content-Type": "application/json",
+          "Content-Length": Buffer.byteLength(payload)
+        }
+      };
+
+      const req = https.request(options, (res) => {
+        let responseBody = "";
+        res.on("data", (chunk) => { responseBody += chunk; });
+        res.on("end", () => {
+          if (res.statusCode >= 200 && res.statusCode < 300) {
+            resolve(JSON.parse(responseBody));
+          } else {
+            reject(new Error(\`Resend API Error: \${res.statusCode} \${responseBody}\`));
+          }
+        });
+      });
+
+      req.on("error", (e) => reject(e));
+      req.write(payload);
+      req.end();
+    });
+  }
+
+  // Fallback to Nodemailer SMTP
+  const mailOptions = {
+    from: \`"CP KKU Chatbot" <\${process.env.SMTP_EMAIL}>\`,
+    to: toEmail,
+    subject: subject,
+    html: htmlContent,
   };
 
   await transporter.sendMail(mailOptions);
