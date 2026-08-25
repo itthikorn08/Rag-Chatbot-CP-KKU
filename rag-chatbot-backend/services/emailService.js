@@ -1,22 +1,21 @@
 const nodemailer = require("nodemailer");
 
 const buildTransportConfig = () => {
-  const service = (process.env.SMTP_SERVICE || "gmail").toLowerCase();
-  const auth = {
-    user: process.env.SMTP_EMAIL,
-    pass: process.env.SMTP_PASSWORD,
-  };
-
-  const knownServices = ["gmail", "hotmail", "yahoo"];
-  if (knownServices.includes(service)) {
-    return { service, auth };
-  }
+  const host = process.env.SMTP_HOST || "smtp.gmail.com";
+  const port = parseInt(process.env.SMTP_PORT, 10) || 465;
+  const secure = process.env.SMTP_SECURE === "false" ? false : (port === 465);
 
   return {
-    host: process.env.SMTP_HOST || "smtp.gmail.com",
-    port: parseInt(process.env.SMTP_PORT, 10) || 587,
-    secure: process.env.SMTP_SECURE === "true",
-    auth,
+    host,
+    port,
+    secure,
+    auth: {
+      user: process.env.SMTP_EMAIL,
+      pass: process.env.SMTP_PASSWORD,
+    },
+    connectionTimeout: 10000,
+    greetingTimeout: 10000,
+    socketTimeout: 15000,
   };
 };
 
