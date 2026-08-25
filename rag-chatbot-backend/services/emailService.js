@@ -1,4 +1,10 @@
 const nodemailer = require("nodemailer");
+const dns = require("dns");
+
+// Force IPv4 first because cloud containers often do not have IPv6 routing
+if (dns.setDefaultResultOrder) {
+  dns.setDefaultResultOrder("ipv4first");
+}
 
 const buildTransportConfig = () => {
   const host = process.env.SMTP_HOST || "smtp.gmail.com";
@@ -13,6 +19,8 @@ const buildTransportConfig = () => {
       user: process.env.SMTP_EMAIL,
       pass: process.env.SMTP_PASSWORD,
     },
+    // Force IPv4 connection to prevent ENETUNREACH
+    family: 4,
     connectionTimeout: 10000,
     greetingTimeout: 10000,
     socketTimeout: 15000,
