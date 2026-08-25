@@ -115,6 +115,8 @@ export const AuthProvider = ({ children }) => {
       setToken(nextToken);
     } else {
       localStorage.removeItem("authToken");
+      localStorage.removeItem("currentView");
+      localStorage.removeItem("profileView");
       setToken(null);
       setUser(null);
     }
@@ -123,6 +125,8 @@ export const AuthProvider = ({ children }) => {
   const logoutAll = useCallback(() => {
     localStorage.removeItem("savedAccounts");
     localStorage.removeItem("authToken");
+    localStorage.removeItem("currentView");
+    localStorage.removeItem("profileView");
     setToken(null);
     setUser(null);
     setSavedAccounts([]);

@@ -342,16 +342,23 @@ const AdminPage = ({ onBack }) => {
             await uploadAdminJson(formData);
             setSuccess(t("admin.success_upload"));
             loadFiles();
-            handleSync();
+            // Sync in background without overwriting success/error state
+            setSyncing(true);
+            syncKnowledge()
+              .then(() => setLastSyncTime(new Date()))
+              .catch((err) => console.error("Background sync failed:", err))
+              .finally(() => setSyncing(false));
           } catch (err) {
-            setError(t("admin.error_upload"));
+            const errMsg = err?.response?.data?.error || err?.message || "";
+            setError((t("admin.error_upload")) + (errMsg ? `: ${errMsg}` : ""));
           } finally {
             setUploading(false);
           }
           return;
         }
       } catch (e) {
-        // Fallback to AI converter if JSON structure is abnormal
+        // JSON parse error or non-standard structure -> fallback to AI converter
+        console.log("JSON is not standard RAG format, falling back to AI converter:", e.message);
       }
     }
 
@@ -369,7 +376,8 @@ const AdminPage = ({ onBack }) => {
       setJsonString(JSON.stringify(res.data, null, 2));
       setSuccess(t("admin.success_convert"));
     } catch (err) {
-      setError(t("admin.error_convert"));
+      const errMsg = err?.response?.data?.error || err?.message || "";
+      setError((t("admin.error_convert")) + (errMsg ? `: ${errMsg}` : ""));
       setShowConverter(false);
       setIsConverting(false);
     } finally {

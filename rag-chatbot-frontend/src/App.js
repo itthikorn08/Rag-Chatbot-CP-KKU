@@ -12,9 +12,36 @@ import { CircularProgress, Box } from "@mui/material";
 const ThemedApp = () => {
   const { actualMode } = useThemeContext();
   const { user, loading, isAdmin } = useAuth();
-  const [guestMode, setGuestMode] = useState(false);
-  const [showAdmin, setShowAdmin] = useState(false);
-  const [profileView, setProfileView] = useState(null); // null, 'details', or 'password'
+  const [guestMode, setGuestMode] = useState(() => localStorage.getItem("guestMode") === "true");
+  const [showAdmin, setShowAdmin] = useState(() => localStorage.getItem("currentView") === "admin");
+  const [profileView, setProfileView] = useState(() => localStorage.getItem("profileView") || null); // null, 'details', or 'password'
+
+  const handleSetGuestMode = (val) => {
+    setGuestMode(val);
+    if (val) {
+      localStorage.setItem("guestMode", "true");
+    } else {
+      localStorage.removeItem("guestMode");
+    }
+  };
+
+  const handleSetShowAdmin = (val) => {
+    setShowAdmin(val);
+    if (val) {
+      localStorage.setItem("currentView", "admin");
+    } else {
+      localStorage.removeItem("currentView");
+    }
+  };
+
+  const handleSetProfileView = (view) => {
+    setProfileView(view);
+    if (view) {
+      localStorage.setItem("profileView", view);
+    } else {
+      localStorage.removeItem("profileView");
+    }
+  };
 
   const theme = useMemo(() => getAppTheme(actualMode), [actualMode]);
 
@@ -41,7 +68,7 @@ const ThemedApp = () => {
     return (
       <MuiThemeProvider theme={theme}>
         <CssBaseline />
-        <AdminPage onBack={() => setShowAdmin(false)} />
+        <AdminPage onBack={() => handleSetShowAdmin(false)} />
       </MuiThemeProvider>
     );
   }
@@ -50,7 +77,7 @@ const ThemedApp = () => {
     return (
       <MuiThemeProvider theme={theme}>
         <CssBaseline />
-        <ProfilePage initialView={profileView} onBack={() => setProfileView(null)} />
+        <ProfilePage initialView={profileView} onBack={() => handleSetProfileView(null)} />
       </MuiThemeProvider>
     );
   }
@@ -60,14 +87,14 @@ const ThemedApp = () => {
       <CssBaseline />
       {user || guestMode ? (
         <ChatPage 
-          onExitGuest={() => setGuestMode(false)} 
+          onExitGuest={() => handleSetGuestMode(false)} 
           isGuest={!user && guestMode} 
           isAdmin={isAdmin}
-          onGoAdmin={() => setShowAdmin(true)}
-          onGoProfile={(view) => setProfileView(view)}
+          onGoAdmin={() => handleSetShowAdmin(true)}
+          onGoProfile={(view) => handleSetProfileView(view)}
         />
       ) : (
-        <LoginPage onGuestMode={() => setGuestMode(true)} />
+        <LoginPage onGuestMode={() => handleSetGuestMode(true)} />
       )}
     </MuiThemeProvider>
   );
