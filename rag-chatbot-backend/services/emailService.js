@@ -92,7 +92,7 @@ const sendOtpEmail = async (toEmail, otp) => {
       const fromEmail = process.env.RESEND_FROM_EMAIL || "onboarding@resend.dev";
       
       const payload = JSON.stringify({
-        from: \`"CP KKU Chatbot" <\${fromEmail}>\`,
+        from: `"CP KKU Chatbot" <${fromEmail}>`,
         to: [toEmail],
         subject: subject,
         html: htmlContent
@@ -104,7 +104,7 @@ const sendOtpEmail = async (toEmail, otp) => {
         path: "/emails",
         method: "POST",
         headers: {
-          "Authorization": \`Bearer \${process.env.RESEND_API_KEY}\`,
+          "Authorization": `Bearer ${process.env.RESEND_API_KEY}`,
           "Content-Type": "application/json",
           "Content-Length": Buffer.byteLength(payload)
         }
@@ -117,7 +117,7 @@ const sendOtpEmail = async (toEmail, otp) => {
           if (res.statusCode >= 200 && res.statusCode < 300) {
             resolve(JSON.parse(responseBody));
           } else {
-            reject(new Error(\`Resend API Error: \${res.statusCode} \${responseBody}\`));
+            reject(new Error(`Resend API Error: ${res.statusCode} ${responseBody}`));
           }
         });
       });
@@ -130,7 +130,7 @@ const sendOtpEmail = async (toEmail, otp) => {
 
   // Fallback to Nodemailer SMTP
   const mailOptions = {
-    from: \`"CP KKU Chatbot" <\${process.env.SMTP_EMAIL}>\`,
+    from: `"CP KKU Chatbot" <${process.env.SMTP_EMAIL}>`,
     to: toEmail,
     subject: subject,
     html: htmlContent,
