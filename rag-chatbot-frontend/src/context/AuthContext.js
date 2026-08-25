@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
-import apiClient from "../api/chatApi";
+import { getMe, loginUser, registerUser, updateProfile as apiUpdateProfile } from "../api/authApi";
 
 const AuthContext = createContext();
 
@@ -26,7 +26,7 @@ export const AuthProvider = ({ children }) => {
         return;
       }
       try {
-        const { data } = await apiClient.get("/auth/me");
+        const data = await getMe();
         setUser(data);
       } catch {
         const accounts = JSON.parse(localStorage.getItem("savedAccounts") || "[]");
@@ -61,7 +61,7 @@ export const AuthProvider = ({ children }) => {
   }, [user, token]);
 
   const login = useCallback(async (email, password) => {
-    const { data } = await apiClient.post("/auth/login", { email, password });
+    const data = await loginUser({ email, password });
     localStorage.setItem("authToken", data.token); 
     setToken(data.token);
     setUser(data.user);
@@ -69,7 +69,7 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const register = useCallback(async (email, password) => {
-    const { data } = await apiClient.post("/auth/register", { email, password });
+    const data = await registerUser({ email, password });
     localStorage.setItem("authToken", data.token); 
     setToken(data.token);
     setUser(data.user);
@@ -77,7 +77,7 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const updateProfile = useCallback(async (displayName, password, firstName, lastName, dateOfBirth, gender) => {
-    const { data } = await apiClient.put("/auth/profile", { displayName, password, firstName, lastName, dateOfBirth, gender });
+    const data = await apiUpdateProfile({ displayName, password, firstName, lastName, dateOfBirth, gender });
     localStorage.setItem("authToken", data.token);
     setToken(data.token);
     setUser(data.user);

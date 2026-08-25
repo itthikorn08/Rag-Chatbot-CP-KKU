@@ -1,6 +1,5 @@
 const jwt = require("jsonwebtoken");
-
-const JWT_SECRET = process.env.JWT_SECRET || "cp-kku-chatbot-secret-2024";
+const { JWT_SECRET } = require("../config/env");
 
 const protect = (req, res, next) => {
   const authHeader = req.headers.authorization;

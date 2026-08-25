@@ -592,7 +592,9 @@ const AdminPage = ({ onBack }) => {
   return (
     <Box
       sx={{
-        minHeight: "100vh",
+        height: "100vh",
+        overflowY: "auto",
+        overflowX: "hidden",
         bgcolor: "background.default",
         pb: 6,
       }}

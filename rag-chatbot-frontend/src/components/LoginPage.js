@@ -32,7 +32,7 @@ import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
 import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
 import { useAuth } from "../context/AuthContext";
 import { useThemeContext } from "../theme/ThemeContext";
-import apiClient from "../api/chatApi";
+import { forgotPassword, verifyOtp, resetPassword } from "../api/authApi";
 
 const OTP_LENGTH = 6;
 const OTP_EXPIRY_SECONDS = 10 * 60; // 10 minutes
@@ -238,7 +238,7 @@ const LoginPage = ({ onGuestMode }) => {
     setForgotError("");
     setForgotLoading(true);
     try {
-      await apiClient.post("/auth/forgot-password", { email: forgotEmail.trim() });
+      await forgotPassword(forgotEmail.trim());
       setForgotStep(1);
       setOtpExpiresAt(Date.now() + OTP_EXPIRY_SECONDS * 1000);
       setForgotSuccess("");
@@ -255,7 +255,7 @@ const LoginPage = ({ onGuestMode }) => {
     setForgotLoading(true);
     setOtp("");
     try {
-      await apiClient.post("/auth/forgot-password", { email: forgotEmail.trim() });
+      await forgotPassword(forgotEmail.trim());
       setOtpExpiresAt(Date.now() + OTP_EXPIRY_SECONDS * 1000);
       setForgotSuccess(t("login.otp_sent_to") + " " + forgotEmail);
     } catch (err) {
@@ -273,7 +273,7 @@ const LoginPage = ({ onGuestMode }) => {
     setForgotError("");
     setForgotLoading(true);
     try {
-      const { data } = await apiClient.post("/auth/verify-otp", {
+      const data = await verifyOtp({
         email: forgotEmail.trim(),
         otp: otp.replace(/ /g, ""),
       });
@@ -298,7 +298,7 @@ const LoginPage = ({ onGuestMode }) => {
     setForgotError("");
     setForgotLoading(true);
     try {
-      await apiClient.post("/auth/reset-password", {
+      await resetPassword({
         resetToken,
         newPassword,
       });

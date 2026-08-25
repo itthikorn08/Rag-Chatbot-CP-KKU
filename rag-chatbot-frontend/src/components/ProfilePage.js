@@ -125,7 +125,9 @@ const ProfilePage = ({ onBack, initialView = "details" }) => {
   return (
     <Box
       sx={{
-        minHeight: "100vh",
+        height: "100vh",
+        overflowY: "auto",
+        overflowX: "hidden",
         display: "flex",
         flexDirection: "column",
         bgcolor: "background.default",

@@ -3,9 +3,7 @@ const crypto = require("crypto");
 const bcrypt = require("bcryptjs");
 const User = require("../models/User");
 const { sendOtpEmail } = require("../services/emailService");
-
-const JWT_SECRET = process.env.JWT_SECRET || "cp-kku-chatbot-secret-2024";
-const TOKEN_EXPIRY = "7d";
+const { JWT_SECRET, JWT_EXPIRY } = require("../config/env");
 
 const generateToken = (user) => {
   return jwt.sign(
