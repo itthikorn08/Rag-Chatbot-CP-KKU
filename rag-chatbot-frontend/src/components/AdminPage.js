@@ -74,6 +74,7 @@ import {
   deleteFeedbackById,
 } from "../api/chatApi";
 import { useTranslation } from "react-i18next";
+import Swal from "sweetalert2";
 
 // ─── Stat Card Component ────────────────────────────────────────
 const StatCard = ({ icon, label, value, color, delay, subtitle }) => {
@@ -209,6 +210,16 @@ const AdminPage = ({ onBack }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [lastSyncTime, setLastSyncTime] = useState(null);
   const [isDragOver, setIsDragOver] = useState(false);
+  const [needsSync, setNeedsSync] = useState(() => localStorage.getItem("adminNeedsSync") === "true");
+
+  const updateNeedsSync = (val) => {
+    setNeedsSync(val);
+    if (val) {
+      localStorage.setItem("adminNeedsSync", "true");
+    } else {
+      localStorage.removeItem("adminNeedsSync");
+    }
+  };
 
   const [isConverting, setIsConverting] = useState(false);
   const [showConverter, setShowConverter] = useState(false);
@@ -316,11 +327,11 @@ const AdminPage = ({ onBack }) => {
 
     const convertibleExtensions = [".pdf", ".txt", ".md", ".docx", ".xlsx", ".xls", ".csv"];
     const fileExtension = file.name.substring(file.name.lastIndexOf(".")).toLowerCase();
-    const isPdf = convertibleExtensions.includes(fileExtension);
+    const isPdfOrDoc = convertibleExtensions.includes(fileExtension);
     const isJson = file.name.toLowerCase().endsWith(".json");
 
-    if (!isJson && !isPdf) {
-      setError(t("admin.error_invalid_type"));
+    if (!isJson && !isPdfOrDoc) {
+      setError(t("admin.error_invalid_type") || "รองรับเฉพาะไฟล์ .json, .pdf, .docx, .xlsx, .csv, .txt, .md เท่านั้น");
       return;
     }
 
@@ -330,39 +341,34 @@ const AdminPage = ({ onBack }) => {
     const formData = new FormData();
     formData.append("file", file);
 
+    // 1. If it's a JSON file -> Upload directly into data/
     if (isJson) {
+      setUploading(true);
       try {
         const textContent = await file.text();
-        const parsed = JSON.parse(textContent);
-        const isStandard = Array.isArray(parsed) && parsed.length > 0 && parsed.every(item => item && typeof item.text === "string" && item.metadata);
-
-        if (isStandard) {
-          setUploading(true);
-          try {
-            await uploadAdminJson(formData);
-            setSuccess(t("admin.success_upload"));
-            loadFiles();
-            // Sync in background without overwriting success/error state
-            setSyncing(true);
-            syncKnowledge()
-              .then(() => setLastSyncTime(new Date()))
-              .catch((err) => console.error("Background sync failed:", err))
-              .finally(() => setSyncing(false));
-          } catch (err) {
-            const errMsg = err?.response?.data?.error || err?.message || "";
-            setError((t("admin.error_upload")) + (errMsg ? `: ${errMsg}` : ""));
-          } finally {
-            setUploading(false);
-          }
+        // Validate JSON syntax
+        try {
+          JSON.parse(textContent);
+        } catch (parseErr) {
+          setError("ไฟล์ JSON ไม่ถูกต้องตามรูปแบบไวยากรณ์: " + parseErr.message);
+          setUploading(false);
           return;
         }
-      } catch (e) {
-        // JSON parse error or non-standard structure -> fallback to AI converter
-        console.log("JSON is not standard RAG format, falling back to AI converter:", e.message);
+
+        await uploadAdminJson(formData);
+        setSuccess(t("admin.success_upload") || "อัปโหลดไฟล์เรียบร้อยแล้ว");
+        updateNeedsSync(true);
+        loadFiles();
+      } catch (err) {
+        const errMsg = err?.response?.data?.error || err?.message || "";
+        setError((t("admin.error_upload") || "เกิดข้อผิดพลาดในการอัปโหลดไฟล์") + (errMsg ? `: ${errMsg}` : ""));
+      } finally {
+        setUploading(false);
       }
+      return;
     }
 
-    // For PDF, Word, Excel, CSV, TXT, MD, or non-standard JSON -> AI Converter
+    // 2. For PDF, Word, Excel, CSV, TXT, MD -> Send to AI Converter
     setIsConverting(true);
     setShowConverter(true);
 
@@ -374,10 +380,10 @@ const AdminPage = ({ onBack }) => {
     try {
       const res = await convertAdminPdf(formData);
       setJsonString(JSON.stringify(res.data, null, 2));
-      setSuccess(t("admin.success_convert"));
+      setSuccess(t("admin.success_convert") || "แปลงไฟล์เป็น JSON สำเร็จ");
     } catch (err) {
       const errMsg = err?.response?.data?.error || err?.message || "";
-      setError((t("admin.error_convert")) + (errMsg ? `: ${errMsg}` : ""));
+      setError((t("admin.error_convert") || "เกิดข้อผิดพลาดในการแปลงไฟล์") + (errMsg ? `: ${errMsg}` : ""));
       setShowConverter(false);
       setIsConverting(false);
     } finally {
@@ -387,7 +393,11 @@ const AdminPage = ({ onBack }) => {
   }, [t, loadFiles]);
 
   const handleFileUpload = async (event) => {
-    processFile(event.target.files[0]);
+    const file = event.target.files[0];
+    if (file) {
+      processFile(file);
+    }
+    event.target.value = null;
   };
 
   // ─── Drag & Drop Handlers ──────────────────────────────────
@@ -438,10 +448,10 @@ const AdminPage = ({ onBack }) => {
     try {
       await saveAdminJson(outputFilename, parsedContent);
       setSuccess(t("admin.success_save_json"));
+      updateNeedsSync(true);
       setShowConverter(false);
       setJsonString("");
       loadFiles();
-      handleSync();
     } catch (err) {
       setError(t("admin.error_upload"));
     } finally {
@@ -456,17 +466,65 @@ const AdminPage = ({ onBack }) => {
     setSuccess(null);
   };
 
-  // ─── Delete File ────────────────────────────────────────────
+  // ─── Delete File with SweetAlert2 ──────────────────────────
   const handleDeleteFile = async (filename) => {
-    if (!window.confirm(t("admin.delete_confirm", { filename }))) return;
+    const isDarkMode = theme.palette.mode === "dark";
+
+    const result = await Swal.fire({
+      title: i18n.language === "th" ? "ยืนยันการลบไฟล์?" : "Delete File?",
+      html: `
+        <div style="font-size: 0.95rem; line-height: 1.6; margin-top: 6px;">
+          ${i18n.language === "th" 
+            ? `คุณแน่ใจหรือไม่ว่าต้องการลบไฟล์ <b style="color: #ef4444; word-break: break-all;">${filename}</b>?<br/><span style="font-size: 0.82rem; color: ${isDarkMode ? '#aaa' : '#666'};">ไฟล์จะถูกลบออกจากระบบ (หากต้องการให้ AI อัปเดตข้อมูล สามารถกดปุ่ม Sync Knowledge ด้วยตนเองภายหลังได้)</span>`
+            : `Are you sure you want to delete <b style="color: #ef4444; word-break: break-all;">${filename}</b>?<br/><span style="font-size: 0.82rem; color: ${isDarkMode ? '#aaa' : '#666'};">This file will be deleted. You can manually click "Sync Knowledge" when ready.</span>`
+          }
+        </div>
+      `,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#ef4444",
+      cancelButtonColor: isDarkMode ? "#374151" : "#9ca3af",
+      confirmButtonText: i18n.language === "th" ? "ลบไฟล์" : "Yes, delete",
+      cancelButtonText: i18n.language === "th" ? "ยกเลิก" : "Cancel",
+      reverseButtons: true,
+      focusCancel: true,
+      background: isDarkMode ? "#1e1e2d" : "#ffffff",
+      color: isDarkMode ? "#f3f4f6" : "#1f2937",
+      customClass: {
+        popup: "swal-rounded-modal",
+        confirmButton: "swal-confirm-btn",
+        cancelButton: "swal-cancel-btn",
+      },
+    });
+
+    if (!result.isConfirmed) return;
 
     try {
       await deleteAdminFile(filename);
       setSuccess(t("admin.success_delete"));
-      setFiles(files.filter((f) => f.name !== filename));
-      handleSync();
+      updateNeedsSync(true);
+      setFiles((prev) => prev.filter((f) => f.name !== filename));
+
+      Swal.fire({
+        title: i18n.language === "th" ? "ลบไฟล์สำเร็จ!" : "Deleted!",
+        text: i18n.language === "th" ? `ลบไฟล์ ${filename} เรียบร้อยแล้ว` : `File ${filename} has been deleted.`,
+        icon: "success",
+        timer: 1600,
+        showConfirmButton: false,
+        background: isDarkMode ? "#1e1e2d" : "#ffffff",
+        color: isDarkMode ? "#f3f4f6" : "#1f2937",
+      });
     } catch (err) {
-      setError(t("admin.error_delete"));
+      const errMsg = err?.response?.data?.error || err?.message || "";
+      setError((t("admin.error_delete")) + (errMsg ? `: ${errMsg}` : ""));
+
+      Swal.fire({
+        title: i18n.language === "th" ? "เกิดข้อผิดพลาด!" : "Error!",
+        text: errMsg || t("admin.error_delete"),
+        icon: "error",
+        background: isDarkMode ? "#1e1e2d" : "#ffffff",
+        color: isDarkMode ? "#f3f4f6" : "#1f2937",
+      });
     }
   };
 
@@ -479,6 +537,7 @@ const AdminPage = ({ onBack }) => {
       await syncKnowledge();
       setSuccess(t("admin.success_sync"));
       setLastSyncTime(new Date());
+      updateNeedsSync(false);
     } catch (err) {
       setError(t("admin.error_sync"));
     } finally {
@@ -618,31 +677,36 @@ const AdminPage = ({ onBack }) => {
 
             {/* Action Buttons */}
             <Box sx={{ display: "flex", gap: 1.5, alignItems: "center" }}>
-              <Tooltip title={t("admin.sync_tooltip")}>
+              <Tooltip title={needsSync ? (i18n.language === "th" ? "ไฟล์มีการเปลี่ยนแปลง กรุณาซิงค์ข้อมูล" : "Files changed, please sync") : t("admin.sync_tooltip")}>
                 <Button
                   variant="contained"
                   startIcon={syncing ? <CircularProgress size={18} color="inherit" /> : <SyncIcon />}
                   onClick={handleSync}
                   disabled={syncing}
                   sx={{
-                    bgcolor: alpha("#fff", 0.15),
-                    color: "#fff",
+                    bgcolor: needsSync ? colors.gold : alpha("#fff", 0.15),
+                    color: needsSync ? "#000" : "#fff",
                     backdropFilter: "blur(10px)",
                     borderRadius: 3,
                     px: 2.5,
-                    fontWeight: 600,
+                    fontWeight: 700,
                     border: "1px solid",
-                    borderColor: alpha("#fff", 0.2),
+                    borderColor: needsSync ? alpha(colors.gold, 0.6) : alpha("#fff", 0.2),
+                    boxShadow: needsSync ? "0 0 16px rgba(251, 191, 36, 0.4)" : "none",
                     "&:hover": {
-                      bgcolor: alpha("#fff", 0.25),
-                      borderColor: alpha("#fff", 0.35),
+                      bgcolor: needsSync ? "#eab308" : alpha("#fff", 0.25),
+                      borderColor: needsSync ? colors.gold : alpha("#fff", 0.35),
                     },
                     "&.Mui-disabled": {
                       color: alpha("#fff", 0.5),
                     },
                   }}
                 >
-                  {syncing ? t("admin.syncing") : t("admin.sync_button")}
+                  {syncing 
+                    ? t("admin.syncing") 
+                    : needsSync 
+                    ? (i18n.language === "th" ? "⚡ ซิงค์ข้อมูล (รอซิงค์)" : "⚡ Sync Knowledge (Pending)")
+                    : t("admin.sync_button")}
                 </Button>
               </Tooltip>
 
@@ -774,6 +838,79 @@ const AdminPage = ({ onBack }) => {
         {adminTab === 0 && (
           <Fade in timeout={400}>
             <Box>
+              {/* ─── Unsynced Changes Alert Banner ─────────────────── */}
+              {needsSync && (
+                <Grow in timeout={400}>
+                  <Paper
+                    elevation={0}
+                    sx={{
+                      mb: 3,
+                      p: 2,
+                      borderRadius: 3,
+                      border: "1px solid",
+                      borderColor: alpha(colors.gold, 0.4),
+                      bgcolor: alpha(colors.gold, isDark ? 0.12 : 0.08),
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      flexWrap: "wrap",
+                      gap: 2,
+                      boxShadow: "0 4px 15px rgba(251, 191, 36, 0.12)",
+                    }}
+                  >
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+                      <Box
+                        sx={{
+                          width: 42,
+                          height: 42,
+                          borderRadius: 2.5,
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          bgcolor: alpha(colors.gold, 0.2),
+                          color: colors.gold,
+                          fontSize: "1.4rem",
+                          flexShrink: 0,
+                        }}
+                      >
+                        ⚠️
+                      </Box>
+                      <Box>
+                        <Typography variant="subtitle2" fontWeight={700} sx={{ color: isDark ? "#fef08a" : "#854d0e" }}>
+                          {i18n.language === "th" ? "ไฟล์ข้อมูลมีการเปลี่ยนแปลง และยังไม่ได้ซิงค์เข้าฐานข้อมูล AI" : "Files modified — Sync Required!"}
+                        </Typography>
+                        <Typography variant="caption" sx={{ color: isDark ? "#fef9c3" : "#713f12" }}>
+                          {i18n.language === "th"
+                            ? "มีการเพิ่ม, แก้ไข หรือลบไฟล์ในคลังข้อมูล กรุณากดปุ่ม 'Sync Knowledge' เพื่อให้แชทบอทอัปเดตข้อมูลล่าสุด"
+                            : "Files were added, modified or deleted. Click 'Sync Knowledge' so the chatbot can learn the latest data."}
+                        </Typography>
+                      </Box>
+                    </Box>
+                    <Button
+                      variant="contained"
+                      size="small"
+                      startIcon={syncing ? <CircularProgress size={16} color="inherit" /> : <SyncIcon />}
+                      onClick={handleSync}
+                      disabled={syncing}
+                      sx={{
+                        bgcolor: colors.gold,
+                        color: "#000",
+                        fontWeight: 700,
+                        borderRadius: 2.5,
+                        px: 2.5,
+                        py: 0.8,
+                        boxShadow: "0 2px 8px rgba(251, 191, 36, 0.3)",
+                        "&:hover": {
+                          bgcolor: "#eab308",
+                        },
+                      }}
+                    >
+                      {syncing ? (i18n.language === "th" ? "กำลังซิงค์..." : "Syncing...") : (i18n.language === "th" ? "ซิงค์ข้อมูลตอนนี้" : "Sync Now")}
+                    </Button>
+                  </Paper>
+                </Grow>
+              )}
+
               {/* ─── Stats Cards ──────────────────────────────────── */}
               <Grid container spacing={2.5} sx={{ mb: 4 }} alignItems="stretch">
                 <Grid item xs={6} md={3} sx={{ display: "flex" }}>
@@ -808,12 +945,12 @@ const AdminPage = ({ onBack }) => {
                 </Grid>
                 <Grid item xs={6} md={3} sx={{ display: "flex" }}>
                   <StatCard
-                    icon={<CheckCircleIcon />}
+                    icon={needsSync ? <SyncIcon /> : <CheckCircleIcon />}
                     label={t("admin.stat_system_status")}
-                    value={t("admin.stat_online")}
-                    color={colors.green}
+                    value={needsSync ? (i18n.language === "th" ? "รอซิงค์ข้อมูล" : "Pending Sync") : t("admin.stat_online")}
+                    color={needsSync ? colors.gold : colors.green}
                     delay={300}
-                    subtitle="Chatbot Active"
+                    subtitle={needsSync ? (i18n.language === "th" ? "มีไฟล์รออัปเดต" : "Changes detected") : "Chatbot Active"}
                   />
                 </Grid>
               </Grid>

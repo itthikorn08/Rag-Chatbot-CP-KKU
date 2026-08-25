@@ -15,8 +15,10 @@ const storage = multer.diskStorage({
     cb(null, dir);
   },
   filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    cb(null, uniqueSuffix + "-" + file.originalname);
+    // Handle UTF-8 original filename properly
+    const decodedName = Buffer.from(file.originalname, "latin1").toString("utf8");
+    const safeName = path.basename(decodedName);
+    cb(null, safeName);
   },
 });
 
